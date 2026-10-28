@@ -74,13 +74,10 @@ function AuthPage() {
         <div className="surface-card p-7">
           <div className="mb-6 flex items-center gap-2">
             <Building2 className="h-5 w-5 text-accent" />
-            <span className="font-display text-base font-bold">Propulsão CRM</span>
+            <span className="font-display text-base font-bold">Modelo CRM</span>
           </div>
 
-          <Tabs
-            value={mode === "reset" ? "signin" : mode}
-            onValueChange={(v) => setMode(v as "signin" | "signup")}
-          >
+          <Tabs value={mode === "reset" ? "signin" : mode} onValueChange={(v) => setMode(v as "signin" | "signup")}>
             <TabsList className="w-full">
               <TabsTrigger value="signin" className="flex-1">
                 Entrar
@@ -131,7 +128,6 @@ function AuthPage() {
                 </div>
               </div>
             )}
-
 
             <Button type="submit" className="w-full" disabled={loading}>
               {loading

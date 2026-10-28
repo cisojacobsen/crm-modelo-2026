@@ -33,19 +33,13 @@ function AuthenticatedLayout() {
       <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col bg-sidebar text-sidebar-foreground md:flex">
         <div className="flex items-center gap-2 px-5 py-6">
           <Building2 className="h-5 w-5 text-sidebar-primary" />
-          <span className="font-display text-sm font-bold tracking-tight">Propulsão CRM</span>
+          <span className="font-display text-sm font-bold tracking-tight">Modelo CRM</span>
         </div>
         <nav className="flex flex-1 flex-col gap-1 px-3">
           <SideLink to="/crm" icon={<KanbanSquare className="h-4 w-4" />} label="Funil de vendas" />
           <SideLink to="/tarefas" icon={<ListChecks className="h-4 w-4" />} label="Tarefas" />
-          <SideLink
-            to="/dashboard"
-            icon={<LayoutDashboard className="h-4 w-4" />}
-            label="Dashboard"
-          />
-          {isAdmin && (
-            <SideLink to="/usuarios" icon={<Users className="h-4 w-4" />} label="Usuários" />
-          )}
+          <SideLink to="/dashboard" icon={<LayoutDashboard className="h-4 w-4" />} label="Dashboard" />
+          {isAdmin && <SideLink to="/usuarios" icon={<Users className="h-4 w-4" />} label="Usuários" />}
         </nav>
         <div className="border-t border-sidebar-border p-3">
           <p className="truncate px-2 pb-2 text-xs text-sidebar-foreground/60">{user?.email}</p>
@@ -60,7 +54,7 @@ function AuthenticatedLayout() {
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex items-center justify-between gap-2 border-b border-border bg-card px-4 py-3 md:hidden">
-          <span className="font-display text-sm font-bold">Propulsão CRM</span>
+          <span className="font-display text-sm font-bold">Modelo CRM</span>
           <div className="flex gap-2">
             <Button asChild variant="ghost" size="sm">
               <Link to="/crm">Funil</Link>

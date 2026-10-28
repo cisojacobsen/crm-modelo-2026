@@ -13,13 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,22 +25,15 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import {
-  listUsers,
-  createUser,
-  setUserAdmin,
-  setUserBlocked,
-  deleteUser,
-  type AppUser,
-} from "@/lib/users.functions";
+import { listUsers, createUser, setUserAdmin, setUserBlocked, deleteUser, type AppUser } from "@/lib/users.functions";
 
 export const Route = createFileRoute("/_authenticated/usuarios")({
   head: () => ({
     meta: [
-      { title: "Usuários · Propulsão CRM" },
-      { name: "description", content: "Gerencie usuários e permissões do Propulsão CRM." },
-      { property: "og:title", content: "Usuários · Propulsão CRM" },
-      { property: "og:description", content: "Gerencie usuários e permissões do Propulsão CRM." },
+      { title: "Usuários · Modelo CRM" },
+      { name: "description", content: "Gerencie usuários e permissões do Modelo CRM." },
+      { property: "og:title", content: "Usuários · Modelo CRM" },
+      { property: "og:description", content: "Gerencie usuários e permissões do Modelo CRM." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -54,8 +41,7 @@ export const Route = createFileRoute("/_authenticated/usuarios")({
   component: UsuariosPage,
 });
 
-const fmt = (d: string | null) =>
-  d ? format(new Date(d), "dd/MM/yyyy HH:mm", { locale: ptBR }) : "Nunca";
+const fmt = (d: string | null) => (d ? format(new Date(d), "dd/MM/yyyy HH:mm", { locale: ptBR }) : "Nunca");
 
 function UsuariosPage() {
   const { isAdmin, isLoading } = useIsAdmin();
@@ -64,9 +50,7 @@ function UsuariosPage() {
     return (
       <div className="p-6">
         <h1 className="font-display text-xl font-bold">Acesso restrito</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Apenas administradores podem acessar esta tela.
-        </p>
+        <p className="mt-2 text-sm text-muted-foreground">Apenas administradores podem acessar esta tela.</p>
         <Button asChild className="mt-4" size="sm">
           <Link to="/crm">Voltar ao funil</Link>
         </Button>
@@ -179,11 +163,7 @@ function UsuariosAdmin() {
                   <td className="p-3">{fmt(u.created_at)}</td>
                   <td className="p-3">{fmt(u.last_sign_in_at)}</td>
                   <td className="p-3">
-                    {u.banned ? (
-                      <Badge variant="destructive">Bloqueado</Badge>
-                    ) : (
-                      <Badge variant="outline">Ativo</Badge>
-                    )}
+                    {u.banned ? <Badge variant="destructive">Bloqueado</Badge> : <Badge variant="outline">Ativo</Badge>}
                   </td>
                   <td className="p-3">
                     <div className="flex items-center gap-2">
@@ -221,15 +201,12 @@ function UsuariosAdmin() {
                           <AlertDialogHeader>
                             <AlertDialogTitle>Excluir usuário?</AlertDialogTitle>
                             <AlertDialogDescription>
-                              {u.email} perderá o acesso definitivamente. Essa ação não pode ser
-                              desfeita.
+                              {u.email} perderá o acesso definitivamente. Essa ação não pode ser desfeita.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
                             <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                            <AlertDialogAction onClick={() => deleteM.mutate(u.id)}>
-                              Excluir
-                            </AlertDialogAction>
+                            <AlertDialogAction onClick={() => deleteM.mutate(u.id)}>Excluir</AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
                       </AlertDialog>
@@ -277,10 +254,7 @@ function UsuariosAdmin() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Switch
-                checked={form.isAdmin}
-                onCheckedChange={(v) => setForm({ ...form, isAdmin: v })}
-              />
+              <Switch checked={form.isAdmin} onCheckedChange={(v) => setForm({ ...form, isAdmin: v })} />
               <Label>Administrador</Label>
             </div>
           </div>

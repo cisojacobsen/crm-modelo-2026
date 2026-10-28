@@ -48,13 +48,7 @@ import {
   utmSummary,
   type Stage,
 } from "@/lib/leads";
-import {
-  responsaveisQuery,
-  motivosPerdaQuery,
-  toDateInput,
-  type Tarefa,
-  type Responsavel,
-} from "@/lib/crm-data";
+import { responsaveisQuery, motivosPerdaQuery, toDateInput, type Tarefa, type Responsavel } from "@/lib/crm-data";
 import { leadsToCsv, downloadCsv } from "@/lib/export-csv";
 import { cn } from "@/lib/utils";
 
@@ -63,13 +57,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 
 import {
   Dialog,
@@ -79,26 +67,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 export const Route = createFileRoute("/_authenticated/crm")({
   head: () => ({
     meta: [
-      { title: "Funil de vendas — Propulsão CRM" },
+      { title: "Funil de vendas — Modelo CRM" },
       { name: "description", content: "Gestão de oportunidades e leads da Rhopi Marcenaria." },
-      { property: "og:title", content: "Funil de vendas — Propulsão CRM" },
+      { property: "og:title", content: "Funil de vendas — Modelo CRM" },
       { property: "og:description", content: "Gestão de oportunidades e leads." },
       { name: "robots", content: "noindex" },
     ],
@@ -137,7 +115,6 @@ type Lead = {
   created_at: string;
 };
 
-
 const BRL = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 
 function CrmPage() {
@@ -158,14 +135,10 @@ function CrmPage() {
   const [exportFrom, setExportFrom] = useState<Date | undefined>(undefined);
   const [exportTo, setExportTo] = useState<Date | undefined>(undefined);
 
-
   const leadsQuery = useQuery({
     queryKey: ["leads"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("leads")
-        .select("*")
-        .order("created_at", { ascending: false });
+      const { data, error } = await supabase.from("leads").select("*").order("created_at", { ascending: false });
       if (error) throw error;
       return (data ?? []) as unknown as Lead[];
     },
@@ -200,11 +173,7 @@ function CrmPage() {
       if (to && created > new Date(`${to}T23:59:59`)) return false;
       if (statusFilter !== "todos" && l.status !== statusFilter) return false;
       if (responsavelFilter === "sem" && l.responsavel_id) return false;
-      if (
-        responsavelFilter !== "todos" &&
-        responsavelFilter !== "sem" &&
-        l.responsavel_id !== responsavelFilter
-      )
+      if (responsavelFilter !== "todos" && responsavelFilter !== "sem" && l.responsavel_id !== responsavelFilter)
         return false;
       if (motivoFilter !== "todos" && (l.motivo_perda ?? "") !== motivoFilter) return false;
       if (canalFilter !== "todos" && resolveChannel(l) !== canalFilter) return false;
@@ -274,10 +243,7 @@ function CrmPage() {
     activeFilters.push({
       key: "resp",
       label: "Responsável",
-      value:
-        responsavelFilter === "sem"
-          ? "Sem responsável"
-          : (responsavelById.get(responsavelFilter)?.nome ?? "—"),
+      value: responsavelFilter === "sem" ? "Sem responsável" : (responsavelById.get(responsavelFilter)?.nome ?? "—"),
       clear: () => setResponsavelFilter("todos"),
     });
   if (motivoFilter !== "todos")
@@ -294,7 +260,6 @@ function CrmPage() {
       value: canalFilter,
       clear: () => setCanalFilter("todos"),
     });
-
 
   // Mantém o lead aberto sincronizado com os dados mais recentes
   useEffect(() => {
@@ -319,8 +284,7 @@ function CrmPage() {
         });
         try {
           const ctx = new (
-            window.AudioContext ||
-            (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
+            window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
           )();
           const osc = ctx.createOscillator();
           const gain = ctx.createGain();
@@ -421,7 +385,6 @@ function CrmPage() {
     );
   }
 
-
   return (
     <div className="flex h-[calc(100dvh-3.5rem)] flex-col p-4 md:h-dvh md:p-6">
       <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
@@ -483,20 +446,13 @@ function CrmPage() {
 
           <div className="mt-6 space-y-6">
             <div className="space-y-3">
-              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                Criação do lead
-              </p>
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Criação do lead</p>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <Label htmlFor="from" className="text-xs">
                     De
                   </Label>
-                  <Input
-                    id="from"
-                    type="date"
-                    value={from}
-                    onChange={(e) => setFrom(e.target.value)}
-                  />
+                  <Input id="from" type="date" value={from} onChange={(e) => setFrom(e.target.value)} />
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="to" className="text-xs">
@@ -508,9 +464,7 @@ function CrmPage() {
             </div>
 
             <div className="space-y-3">
-              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                Data de fechamento
-              </p>
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Data de fechamento</p>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <Label htmlFor="fechamentoFrom" className="text-xs">
@@ -538,9 +492,7 @@ function CrmPage() {
             </div>
 
             <div className="space-y-3">
-              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                Classificação
-              </p>
+              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Classificação</p>
               <div className="space-y-1.5">
                 <Label className="text-xs">Status</Label>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -607,12 +559,7 @@ function CrmPage() {
             </div>
 
             <div className="flex gap-2 border-t pt-4">
-              <Button
-                variant="outline"
-                className="flex-1"
-                onClick={clearFilters}
-                disabled={activeFilters.length === 0}
-              >
+              <Button variant="outline" className="flex-1" onClick={clearFilters} disabled={activeFilters.length === 0}>
                 Limpar
               </Button>
               <Button className="flex-1" onClick={() => setFiltersOpen(false)}>
@@ -622,7 +569,6 @@ function CrmPage() {
           </div>
         </SheetContent>
       </Sheet>
-
 
       {leadsQuery.isLoading ? (
         <p className="text-sm text-muted-foreground">Carregando leads...</p>
@@ -645,9 +591,7 @@ function CrmPage() {
                       {items.length}
                     </span>
                   </div>
-                  <p className="mt-0.5 text-xs font-semibold text-muted-foreground">
-                    {BRL.format(stageTotal)}
-                  </p>
+                  <p className="mt-0.5 text-xs font-semibold text-muted-foreground">{BRL.format(stageTotal)}</p>
                 </div>
                 <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto overscroll-contain pr-1">
                   {items.map((lead) => (
@@ -673,9 +617,7 @@ function CrmPage() {
                           </Badge>
                         )}
                       </div>
-                      <p className="mt-1 line-clamp-1 text-xs text-muted-foreground">
-                        {lead.telefone}
-                      </p>
+                      <p className="mt-1 line-clamp-1 text-xs text-muted-foreground">{lead.telefone}</p>
                       <p className="mt-2 text-base font-bold">
                         {lead.investimento_valor != null
                           ? BRL.format(lead.investimento_valor)
@@ -695,9 +637,7 @@ function CrmPage() {
                       </div>
                     </button>
                   ))}
-                  {items.length === 0 && (
-                    <p className="px-1 text-xs text-muted-foreground">Arraste cards para cá</p>
-                  )}
+                  {items.length === 0 && <p className="px-1 text-xs text-muted-foreground">Arraste cards para cá</p>}
                 </div>
               </div>
             );
@@ -713,9 +653,7 @@ function CrmPage() {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Exportar leads em CSV</DialogTitle>
-            <DialogDescription>
-              Escolha o período de criação dos leads que deseja exportar.
-            </DialogDescription>
+            <DialogDescription>Escolha o período de criação dos leads que deseja exportar.</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-2 gap-4">
@@ -744,13 +682,7 @@ function CrmPage() {
   );
 }
 
-function ResponsaveisDialog({
-  open,
-  onOpenChange,
-}: {
-  open: boolean;
-  onOpenChange: (v: boolean) => void;
-}) {
+function ResponsaveisDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
   const queryClient = useQueryClient();
   const responsaveis = useQuery(responsaveisQuery);
   const [nome, setNome] = useState("");
@@ -820,12 +752,7 @@ function ResponsaveisDialog({
                 <p className="font-medium">{r.nome}</p>
                 {r.email && <p className="text-xs text-muted-foreground">{r.email}</p>}
               </div>
-              <Button
-                size="sm"
-                variant="ghost"
-                className="text-destructive"
-                onClick={() => remove.mutate(r.id)}
-              >
+              <Button size="sm" variant="ghost" className="text-destructive" onClick={() => remove.mutate(r.id)}>
                 <Trash2 className="h-4 w-4" />
               </Button>
             </div>
@@ -839,13 +766,7 @@ function ResponsaveisDialog({
   );
 }
 
-function CreateLeadDialog({
-  open,
-  onOpenChange,
-}: {
-  open: boolean;
-  onOpenChange: (v: boolean) => void;
-}) {
+function CreateLeadDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
   const queryClient = useQueryClient();
   const responsaveis = useQuery(responsaveisQuery);
   const emptyForm = {
@@ -935,10 +856,7 @@ function CreateLeadDialog({
             </div>
             <div className="space-y-1">
               <Label>Responsável</Label>
-              <Select
-                value={form.responsavel_id}
-                onValueChange={(v) => setForm({ ...form, responsavel_id: v })}
-              >
+              <Select value={form.responsavel_id} onValueChange={(v) => setForm({ ...form, responsavel_id: v })}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
@@ -958,10 +876,7 @@ function CreateLeadDialog({
           <Button variant="ghost" onClick={() => onOpenChange(false)}>
             Cancelar
           </Button>
-          <Button
-            disabled={!form.nome || !form.telefone || mutation.isPending}
-            onClick={() => mutation.mutate()}
-          >
+          <Button disabled={!form.nome || !form.telefone || mutation.isPending} onClick={() => mutation.mutate()}>
             Criar oportunidade
           </Button>
         </DialogFooter>
@@ -1057,17 +972,11 @@ function LeadDetailDialog({ lead, onClose }: { lead: Lead | null; onClose: () =>
           .from("lead-attachments")
           .remove(atts.map((a) => a.file_path));
         if (storageErr) throw storageErr;
-        const { error: delAttErr } = await supabase
-          .from("lead_attachments")
-          .delete()
-          .eq("lead_id", leadId);
+        const { error: delAttErr } = await supabase.from("lead_attachments").delete().eq("lead_id", leadId);
         if (delAttErr) throw delAttErr;
       }
 
-      const { error: delNotesErr } = await supabase
-        .from("lead_notes")
-        .delete()
-        .eq("lead_id", leadId);
+      const { error: delNotesErr } = await supabase.from("lead_notes").delete().eq("lead_id", leadId);
       if (delNotesErr) throw delNotesErr;
 
       const { error } = await supabase.from("leads").delete().eq("id", leadId);
@@ -1117,9 +1026,7 @@ function LeadDetailDialog({ lead, onClose }: { lead: Lead | null; onClose: () =>
       if (files && files.length > 0) {
         for (const file of Array.from(files)) {
           const path = `${lead!.id}/${crypto.randomUUID()}-${file.name}`;
-          const { error: upErr } = await supabase.storage
-            .from("lead-attachments")
-            .upload(path, file);
+          const { error: upErr } = await supabase.storage.from("lead-attachments").upload(path, file);
           if (upErr) throw upErr;
           const { error: metaErr } = await supabase.from("lead_attachments").insert({
             lead_id: lead!.id,
@@ -1171,9 +1078,7 @@ function LeadDetailDialog({ lead, onClose }: { lead: Lead | null; onClose: () =>
   });
 
   async function openAttachment(path: string) {
-    const { data, error } = await supabase.storage
-      .from("lead-attachments")
-      .createSignedUrl(path, 60 * 10);
+    const { data, error } = await supabase.storage.from("lead-attachments").createSignedUrl(path, 60 * 10);
     if (error || !data) {
       toast.error("Não foi possível abrir o anexo.");
       return;
@@ -1183,9 +1088,7 @@ function LeadDetailDialog({ lead, onClose }: { lead: Lead | null; onClose: () =>
 
   const motivoSelecionado = (motivos.data ?? []).find((m) => m.id === motivoId);
   const motivoFinal =
-    motivoSelecionado?.motivo === "Outro"
-      ? motivoOutro.trim()
-      : (motivoSelecionado?.motivo ?? "").trim();
+    motivoSelecionado?.motivo === "Outro" ? motivoOutro.trim() : (motivoSelecionado?.motivo ?? "").trim();
 
   return (
     <Dialog open={Boolean(lead)} onOpenChange={(v) => !v && onClose()}>
@@ -1195,352 +1098,332 @@ function LeadDetailDialog({ lead, onClose }: { lead: Lead | null; onClose: () =>
             <DialogHeader>
               <DialogTitle>{lead.nome}</DialogTitle>
               <DialogDescription>
-                Criado em {format(new Date(lead.created_at), "dd/MM/yyyy HH:mm", { locale: ptBR })}{" "}
-                · {resolveChannel(lead)}
+                Criado em {format(new Date(lead.created_at), "dd/MM/yyyy HH:mm", { locale: ptBR })} ·{" "}
+                {resolveChannel(lead)}
               </DialogDescription>
             </DialogHeader>
 
             <div className="grid gap-4 lg:grid-cols-2">
-            <div className="min-w-0 space-y-3">
-            <div className="space-y-3 rounded-lg border border-border p-3">
-              <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold">Dados do lead</h3>
-                {!editandoContato && (
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="h-8 w-8 p-0"
-                    onClick={() => setEditandoContato(true)}
-                    aria-label="Editar dados do lead"
-                  >
-                    <Pencil className="h-4 w-4" />
+              <div className="min-w-0 space-y-3">
+                <div className="space-y-3 rounded-lg border border-border p-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-semibold">Dados do lead</h3>
+                    {!editandoContato && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-8 w-8 p-0"
+                        onClick={() => setEditandoContato(true)}
+                        aria-label="Editar dados do lead"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    )}
+                  </div>
+
+                  {editandoContato ? (
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <div className="space-y-1">
+                        <Label className="text-xs">Nome *</Label>
+                        <Input
+                          value={contato.nome}
+                          onChange={(e) => setContato({ ...contato, nome: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">WhatsApp / Telefone *</Label>
+                        <Input
+                          inputMode="tel"
+                          maxLength={15}
+                          value={contato.telefone}
+                          onChange={(e) => setContato({ ...contato, telefone: maskPhone(e.target.value) })}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">E-mail</Label>
+                        <Input
+                          type="email"
+                          value={contato.email}
+                          onChange={(e) => setContato({ ...contato, email: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">Cidade</Label>
+                        <Input
+                          value={contato.cidade}
+                          onChange={(e) => setContato({ ...contato, cidade: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">Valor do projeto (R$)</Label>
+                        <Input
+                          type="number"
+                          min={0}
+                          step="0.01"
+                          placeholder="0,00"
+                          value={contato.valor}
+                          onChange={(e) => setContato({ ...contato, valor: e.target.value })}
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">Responsável</Label>
+                        <Select
+                          value={contato.responsavel_id}
+                          onValueChange={(v) => setContato({ ...contato, responsavel_id: v })}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="sem">Sem responsável</SelectItem>
+                            {(responsaveis.data ?? []).map((r) => (
+                              <SelectItem key={r.id} value={r.id}>
+                                {r.nome}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="flex gap-2 sm:col-span-2">
+                        <Button size="sm" disabled={saveContato.isPending} onClick={() => saveContato.mutate()}>
+                          {saveContato.isPending ? "Salvando..." : "Salvar"}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          disabled={saveContato.isPending}
+                          onClick={() => {
+                            setEditandoContato(false);
+                            setContato({
+                              nome: lead.nome ?? "",
+                              telefone: lead.telefone ?? "",
+                              email: lead.email ?? "",
+                              cidade: lead.cidade ?? "",
+                              valor: lead.investimento_valor != null ? String(lead.investimento_valor) : "",
+                              responsavel_id: lead.responsavel_id ?? "sem",
+                            });
+                          }}
+                        >
+                          Cancelar
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="grid gap-2 text-sm">
+                      <div className="flex items-center gap-2">
+                        <Phone className="h-4 w-4 text-muted-foreground" />
+                        <span>{lead.telefone}</span>
+                        <CopyButton value={lead.telefone} label="Telefone" />
+                        <WhatsAppButton phone={lead.telefone} />
+                      </div>
+                      {lead.email && (
+                        <div className="flex items-center gap-2">
+                          <Mail className="h-4 w-4 text-muted-foreground" />
+                          <span>{lead.email}</span>
+                          <CopyButton value={lead.email} label="E-mail" />
+                        </div>
+                      )}
+                      {lead.cidade && (
+                        <div className="flex items-center gap-2">
+                          <span className="text-muted-foreground">Cidade:</span>
+                          <span>{lead.cidade}</span>
+                        </div>
+                      )}
+                      <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground">Valor:</span>
+                        <span className="font-semibold">
+                          {lead.investimento_valor != null
+                            ? BRL.format(lead.investimento_valor)
+                            : (INVESTIMENTO_LABELS[lead.investimento ?? ""] ?? "Valor não informado")}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground">Responsável:</span>
+                        <span>
+                          {lead.responsavel_id
+                            ? ((responsaveis.data ?? []).find((r) => r.id === lead.responsavel_id)?.nome ?? "—")
+                            : "Sem responsável"}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-2 rounded-lg border border-border p-3">
+                  <div className="flex items-center gap-2">
+                    <Tag className="h-4 w-4 text-muted-foreground" />
+                    <h3 className="text-sm font-semibold">Origem / UTMs</h3>
+                    <Badge variant="outline" className="font-normal">
+                      {resolveChannel(lead)}
+                    </Badge>
+                  </div>
+                  {utmSummary(lead).length > 0 ? (
+                    <div className="grid gap-1 text-xs sm:grid-cols-2">
+                      {utmSummary(lead).map((row) => (
+                        <div key={row.label} className="flex flex-col">
+                          <span className="text-muted-foreground">{row.label}</span>
+                          <span className="break-all font-medium">{row.value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-muted-foreground">Nenhuma UTM registrada para este lead.</p>
+                  )}
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  <Button size="sm" onClick={() => setStatus.mutate({ status: "ganho" })}>
+                    <Trophy className="mr-1 h-4 w-4" /> Marcar como ganho
                   </Button>
+                  <AlertDialog open={perdaOpen} onOpenChange={setPerdaOpen}>
+                    <AlertDialogTrigger asChild>
+                      <Button size="sm" variant="destructive">
+                        <XCircle className="mr-1 h-4 w-4" /> Marcar como perdido
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Motivo da perda</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Informar o motivo da perda é obrigatório. Selecione um dos motivos cadastrados.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <Select value={motivoId} onValueChange={setMotivoId}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione o motivo *" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {(motivos.data ?? []).map((m) => (
+                            <SelectItem key={m.id} value={m.id}>
+                              {m.motivo}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      {motivoSelecionado?.motivo === "Outro" && (
+                        <Textarea
+                          value={motivoOutro}
+                          onChange={(e) => setMotivoOutro(e.target.value)}
+                          placeholder="Descreva o motivo da perda *"
+                          required
+                        />
+                      )}
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                        <AlertDialogAction
+                          disabled={!motivoSelecionado || setStatus.isPending}
+                          onClick={(e) => {
+                            if (!motivoSelecionado) {
+                              e.preventDefault();
+                              toast.error("É obrigatório informar o motivo da perda.");
+                              return;
+                            }
+                            if (motivoSelecionado.motivo === "Outro" && motivoOutro.trim().length < 3) {
+                              e.preventDefault();
+                              toast.error("É obrigatório descrever o motivo da perda.");
+                              return;
+                            }
+                            setStatus.mutate({ status: "abandonado", motivoPerda: motivoFinal });
+                          }}
+                        >
+                          Confirmar perda
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+
+                  {lead.status !== "aberto" && (
+                    <Button size="sm" variant="outline" onClick={() => setStatus.mutate({ status: "aberto" })}>
+                      Reabrir
+                    </Button>
+                  )}
+                  {isAdmin && (
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button size="sm" variant="outline" className="ml-auto text-destructive">
+                          <Trash2 className="mr-1 h-4 w-4" /> Excluir lead
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Excluir esta oportunidade?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            O lead <strong>{lead.nome}</strong>, suas anotações e anexos serão apagados definitivamente.
+                            Esta ação não pode ser desfeita.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => deleteLead.mutate()} disabled={deleteLead.isPending}>
+                            {deleteLead.isPending ? "Excluindo..." : "Excluir"}
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  )}
+                </div>
+
+                {lead.status === "abandonado" && lead.motivo_perda && (
+                  <p className="rounded-lg bg-surface p-3 text-sm text-muted-foreground">
+                    <strong>Motivo da perda:</strong> {lead.motivo_perda}
+                  </p>
                 )}
               </div>
 
-              {editandoContato ? (
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <div className="space-y-1">
-                    <Label className="text-xs">Nome *</Label>
-                    <Input
-                      value={contato.nome}
-                      onChange={(e) => setContato({ ...contato, nome: e.target.value })}
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <Label className="text-xs">WhatsApp / Telefone *</Label>
-                    <Input
-                      inputMode="tel"
-                      maxLength={15}
-                      value={contato.telefone}
-                      onChange={(e) => setContato({ ...contato, telefone: maskPhone(e.target.value) })}
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <Label className="text-xs">E-mail</Label>
-                    <Input
-                      type="email"
-                      value={contato.email}
-                      onChange={(e) => setContato({ ...contato, email: e.target.value })}
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <Label className="text-xs">Cidade</Label>
-                    <Input
-                      value={contato.cidade}
-                      onChange={(e) => setContato({ ...contato, cidade: e.target.value })}
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <Label className="text-xs">Valor do projeto (R$)</Label>
-                    <Input
-                      type="number"
-                      min={0}
-                      step="0.01"
-                      placeholder="0,00"
-                      value={contato.valor}
-                      onChange={(e) => setContato({ ...contato, valor: e.target.value })}
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <Label className="text-xs">Responsável</Label>
-                    <Select
-                      value={contato.responsavel_id}
-                      onValueChange={(v) => setContato({ ...contato, responsavel_id: v })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="sem">Sem responsável</SelectItem>
-                        {(responsaveis.data ?? []).map((r) => (
-                          <SelectItem key={r.id} value={r.id}>
-                            {r.nome}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="flex gap-2 sm:col-span-2">
-                    <Button
-                      size="sm"
-                      disabled={saveContato.isPending}
-                      onClick={() => saveContato.mutate()}
-                    >
-                      {saveContato.isPending ? "Salvando..." : "Salvar"}
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      disabled={saveContato.isPending}
-                      onClick={() => {
-                        setEditandoContato(false);
-                        setContato({
-                          nome: lead.nome ?? "",
-                          telefone: lead.telefone ?? "",
-                          email: lead.email ?? "",
-                          cidade: lead.cidade ?? "",
-                          valor: lead.investimento_valor != null ? String(lead.investimento_valor) : "",
-                          responsavel_id: lead.responsavel_id ?? "sem",
-                        });
-                      }}
-                    >
-                      Cancelar
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <div className="grid gap-2 text-sm">
-                  <div className="flex items-center gap-2">
-                    <Phone className="h-4 w-4 text-muted-foreground" />
-                    <span>{lead.telefone}</span>
-                    <CopyButton value={lead.telefone} label="Telefone" />
-                    <WhatsAppButton phone={lead.telefone} />
-                  </div>
-                  {lead.email && (
-                    <div className="flex items-center gap-2">
-                      <Mail className="h-4 w-4 text-muted-foreground" />
-                      <span>{lead.email}</span>
-                      <CopyButton value={lead.email} label="E-mail" />
-                    </div>
-                  )}
-                  {lead.cidade && (
-                    <div className="flex items-center gap-2">
-                      <span className="text-muted-foreground">Cidade:</span>
-                      <span>{lead.cidade}</span>
-                    </div>
-                  )}
-                  <div className="flex items-center gap-2">
-                    <span className="text-muted-foreground">Valor:</span>
-                    <span className="font-semibold">
-                      {lead.investimento_valor != null
-                        ? BRL.format(lead.investimento_valor)
-                        : (INVESTIMENTO_LABELS[lead.investimento ?? ""] ?? "Valor não informado")}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-muted-foreground">Responsável:</span>
-                    <span>
-                    {lead.responsavel_id
-                        ? (
-                            (responsaveis.data ?? []).find((r) => r.id === lead.responsavel_id)
-                              ?.nome ?? "—"
-                          )
-                        : "Sem responsável"}
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
+              <div className="min-w-0 space-y-4">
+                <LeadTarefas leadId={lead.id} />
 
-            <div className="space-y-2 rounded-lg border border-border p-3">
-              <div className="flex items-center gap-2">
-                <Tag className="h-4 w-4 text-muted-foreground" />
-                <h3 className="text-sm font-semibold">Origem / UTMs</h3>
-                <Badge variant="outline" className="font-normal">
-                  {resolveChannel(lead)}
-                </Badge>
-              </div>
-              {utmSummary(lead).length > 0 ? (
-                <div className="grid gap-1 text-xs sm:grid-cols-2">
-                  {utmSummary(lead).map((row) => (
-                    <div key={row.label} className="flex flex-col">
-                      <span className="text-muted-foreground">{row.label}</span>
-                      <span className="break-all font-medium">{row.value}</span>
+                <div className="space-y-2 border-t border-border pt-4">
+                  <Label className="flex items-center gap-2 text-sm">
+                    <MessageSquare className="h-4 w-4" /> Nova anotação
+                  </Label>
+                  <Textarea
+                    value={note}
+                    onChange={(e) => setNote(e.target.value)}
+                    placeholder="Registre o contato, orçamento enviado, visita agendada..."
+                  />
+                  <input
+                    type="file"
+                    multiple
+                    onChange={(e) => setFiles(e.target.files)}
+                    className="block w-full text-xs text-muted-foreground file:mr-3 file:rounded-md file:border file:border-border file:bg-secondary file:px-3 file:py-1.5 file:text-xs"
+                  />
+                  <Button size="sm" disabled={!note || addNote.isPending} onClick={() => addNote.mutate()}>
+                    {addNote.isPending ? "Salvando..." : "Adicionar à timeline"}
+                  </Button>
+                </div>
+
+                <div className="space-y-3 border-t border-border pt-4">
+                  <h3 className="text-sm font-semibold">Histórico</h3>
+                  {timeline.isLoading && <p className="text-xs text-muted-foreground">Carregando...</p>}
+                  {timeline.data?.length === 0 && (
+                    <p className="text-xs text-muted-foreground">Nenhum registro ainda.</p>
+                  )}
+                  {timeline.data?.map((entry) => (
+                    <div key={entry.id} className="rounded-lg border border-border p-3">
+                      <p className="text-xs text-muted-foreground">
+                        {format(new Date(entry.created_at), "dd/MM/yyyy HH:mm", { locale: ptBR })}
+                      </p>
+                      <p className="mt-1 whitespace-pre-wrap text-sm">{entry.content}</p>
+                      {entry.attachments.length > 0 && (
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {entry.attachments.map((a) => (
+                            <button
+                              key={a.id}
+                              onClick={() => openAttachment(a.file_path)}
+                              className="inline-flex items-center gap-1 rounded-md bg-secondary px-2 py-1 text-xs hover:bg-accent hover:text-accent-foreground"
+                            >
+                              <Paperclip className="h-3 w-3" />
+                              {a.file_name}
+                              <Download className="h-3 w-3" />
+                            </button>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
-              ) : (
-                <p className="text-xs text-muted-foreground">
-                  Nenhuma UTM registrada para este lead.
-                </p>
-              )}
-            </div>
-
-            <div className="flex flex-wrap gap-2">
-              <Button size="sm" onClick={() => setStatus.mutate({ status: "ganho" })}>
-                <Trophy className="mr-1 h-4 w-4" /> Marcar como ganho
-              </Button>
-              <AlertDialog open={perdaOpen} onOpenChange={setPerdaOpen}>
-                <AlertDialogTrigger asChild>
-                  <Button size="sm" variant="destructive">
-                    <XCircle className="mr-1 h-4 w-4" /> Marcar como perdido
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Motivo da perda</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Informar o motivo da perda é obrigatório. Selecione um dos motivos cadastrados.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <Select value={motivoId} onValueChange={setMotivoId}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Selecione o motivo *" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {(motivos.data ?? []).map((m) => (
-                        <SelectItem key={m.id} value={m.id}>
-                          {m.motivo}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {motivoSelecionado?.motivo === "Outro" && (
-                    <Textarea
-                      value={motivoOutro}
-                      onChange={(e) => setMotivoOutro(e.target.value)}
-                      placeholder="Descreva o motivo da perda *"
-                      required
-                    />
-                  )}
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                    <AlertDialogAction
-                      disabled={!motivoSelecionado || setStatus.isPending}
-                      onClick={(e) => {
-                        if (!motivoSelecionado) {
-                          e.preventDefault();
-                          toast.error("É obrigatório informar o motivo da perda.");
-                          return;
-                        }
-                        if (motivoSelecionado.motivo === "Outro" && motivoOutro.trim().length < 3) {
-                          e.preventDefault();
-                          toast.error("É obrigatório descrever o motivo da perda.");
-                          return;
-                        }
-                        setStatus.mutate({ status: "abandonado", motivoPerda: motivoFinal });
-                      }}
-                    >
-                      Confirmar perda
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-
-              {lead.status !== "aberto" && (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  onClick={() => setStatus.mutate({ status: "aberto" })}
-                >
-                  Reabrir
-                </Button>
-              )}
-              {isAdmin && (
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button size="sm" variant="outline" className="ml-auto text-destructive">
-                    <Trash2 className="mr-1 h-4 w-4" /> Excluir lead
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Excluir esta oportunidade?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      O lead <strong>{lead.nome}</strong>, suas anotações e anexos serão apagados
-                      definitivamente. Esta ação não pode ser desfeita.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={() => deleteLead.mutate()}
-                      disabled={deleteLead.isPending}
-                    >
-                      {deleteLead.isPending ? "Excluindo..." : "Excluir"}
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
-              )}
-            </div>
-
-            {lead.status === "abandonado" && lead.motivo_perda && (
-              <p className="rounded-lg bg-surface p-3 text-sm text-muted-foreground">
-                <strong>Motivo da perda:</strong> {lead.motivo_perda}
-              </p>
-            )}
-            </div>
-
-            <div className="min-w-0 space-y-4">
-            <LeadTarefas leadId={lead.id} />
-
-            <div className="space-y-2 border-t border-border pt-4">
-              <Label className="flex items-center gap-2 text-sm">
-                <MessageSquare className="h-4 w-4" /> Nova anotação
-              </Label>
-              <Textarea
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-                placeholder="Registre o contato, orçamento enviado, visita agendada..."
-              />
-              <input
-                type="file"
-                multiple
-                onChange={(e) => setFiles(e.target.files)}
-                className="block w-full text-xs text-muted-foreground file:mr-3 file:rounded-md file:border file:border-border file:bg-secondary file:px-3 file:py-1.5 file:text-xs"
-              />
-              <Button
-                size="sm"
-                disabled={!note || addNote.isPending}
-                onClick={() => addNote.mutate()}
-              >
-                {addNote.isPending ? "Salvando..." : "Adicionar à timeline"}
-              </Button>
-            </div>
-
-            <div className="space-y-3 border-t border-border pt-4">
-              <h3 className="text-sm font-semibold">Histórico</h3>
-              {timeline.isLoading && <p className="text-xs text-muted-foreground">Carregando...</p>}
-              {timeline.data?.length === 0 && (
-                <p className="text-xs text-muted-foreground">Nenhum registro ainda.</p>
-              )}
-              {timeline.data?.map((entry) => (
-                <div key={entry.id} className="rounded-lg border border-border p-3">
-                  <p className="text-xs text-muted-foreground">
-                    {format(new Date(entry.created_at), "dd/MM/yyyy HH:mm", { locale: ptBR })}
-                  </p>
-                  <p className="mt-1 whitespace-pre-wrap text-sm">{entry.content}</p>
-                  {entry.attachments.length > 0 && (
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      {entry.attachments.map((a) => (
-                        <button
-                          key={a.id}
-                          onClick={() => openAttachment(a.file_path)}
-                          className="inline-flex items-center gap-1 rounded-md bg-secondary px-2 py-1 text-xs hover:bg-accent hover:text-accent-foreground"
-                        >
-                          <Paperclip className="h-3 w-3" />
-                          {a.file_name}
-                          <Download className="h-3 w-3" />
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-            </div>
+              </div>
             </div>
           </>
         )}
@@ -1624,20 +1507,11 @@ function LeadTarefas({ leadId }: { leadId: string }) {
       <div className="flex flex-wrap items-end gap-2">
         <div className="min-w-40 flex-1 space-y-1">
           <Label className="text-xs">Tarefa</Label>
-          <Input
-            value={titulo}
-            onChange={(e) => setTitulo(e.target.value)}
-            placeholder="Ex.: ligar para o cliente"
-          />
+          <Input value={titulo} onChange={(e) => setTitulo(e.target.value)} placeholder="Ex.: ligar para o cliente" />
         </div>
         <div className="space-y-1">
           <Label className="text-xs">Vencimento</Label>
-          <Input
-            type="datetime-local"
-            value={dueAt}
-            onChange={(e) => setDueAt(e.target.value)}
-            className="w-52"
-          />
+          <Input type="datetime-local" value={dueAt} onChange={(e) => setDueAt(e.target.value)} className="w-52" />
         </div>
         <div className="space-y-1">
           <Label className="text-xs">Responsável</Label>
@@ -1662,10 +1536,7 @@ function LeadTarefas({ leadId }: { leadId: string }) {
 
       <div className="space-y-2">
         {(tarefas.data ?? []).map((t) => (
-          <div
-            key={t.id}
-            className="flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm"
-          >
+          <div key={t.id} className="flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm">
             <button onClick={() => toggle.mutate(t)} aria-label="Concluir tarefa">
               {t.concluida ? (
                 <CheckSquare className="h-4 w-4 text-primary" />
@@ -1676,17 +1547,10 @@ function LeadTarefas({ leadId }: { leadId: string }) {
             <div className="min-w-0 flex-1">
               <p className={t.concluida ? "line-through text-muted-foreground" : ""}>{t.titulo}</p>
               <p className="text-xs text-muted-foreground">
-                {t.due_at
-                  ? format(new Date(t.due_at), "dd/MM/yyyy HH:mm", { locale: ptBR })
-                  : "Sem prazo"}
+                {t.due_at ? format(new Date(t.due_at), "dd/MM/yyyy HH:mm", { locale: ptBR }) : "Sem prazo"}
               </p>
             </div>
-            <Button
-              size="sm"
-              variant="ghost"
-              className="text-destructive"
-              onClick={() => remove.mutate(t.id)}
-            >
+            <Button size="sm" variant="ghost" className="text-destructive" onClick={() => remove.mutate(t.id)}>
               <Trash2 className="h-4 w-4" />
             </Button>
           </div>

@@ -11,20 +11,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export const Route = createFileRoute("/_authenticated/tarefas")({
   head: () => ({
     meta: [
-      { title: "Tarefas — Propulsão CRM" },
+      { title: "Tarefas — Modelo CRM" },
       { name: "description", content: "Agenda de tarefas comerciais por lead e responsável." },
-      { property: "og:title", content: "Tarefas — Propulsão CRM" },
+      { property: "og:title", content: "Tarefas — Modelo CRM" },
       { property: "og:description", content: "Agenda de tarefas comerciais do funil." },
       { name: "robots", content: "noindex" },
     ],
@@ -67,8 +61,7 @@ function TarefasPage() {
     return all.filter((t) => {
       if (!mostrarConcluidas && t.concluida) return false;
       if (respFilter === "sem" && t.responsavel_id) return false;
-      if (respFilter !== "todos" && respFilter !== "sem" && t.responsavel_id !== respFilter)
-        return false;
+      if (respFilter !== "todos" && respFilter !== "sem" && t.responsavel_id !== respFilter) return false;
 
       if (periodo === "todas") return true;
       if (!t.due_at) return false;
@@ -139,12 +132,7 @@ function TarefasPage() {
         {(periodo === "hoje" || periodo === "semana") && (
           <div className="space-y-1">
             <Label className="text-xs">Dia</Label>
-            <Input
-              type="date"
-              value={dia}
-              onChange={(e) => setDia(e.target.value)}
-              className="w-40"
-            />
+            <Input type="date" value={dia} onChange={(e) => setDia(e.target.value)} className="w-40" />
           </div>
         )}
         <div className="space-y-1">
@@ -178,10 +166,7 @@ function TarefasPage() {
           {lista.map((t) => {
             const atrasada = t.due_at && !t.concluida && new Date(t.due_at) < new Date();
             return (
-              <div
-                key={t.id}
-                className="surface-card flex flex-wrap items-center gap-3 p-3 text-sm"
-              >
+              <div key={t.id} className="surface-card flex flex-wrap items-center gap-3 p-3 text-sm">
                 <button onClick={() => toggle.mutate(t)} aria-label="Concluir tarefa">
                   {t.concluida ? (
                     <CheckSquare className="h-5 w-5 text-primary" />
@@ -190,24 +175,15 @@ function TarefasPage() {
                   )}
                 </button>
                 <div className="min-w-40 flex-1">
-                  <p className={t.concluida ? "line-through text-muted-foreground" : "font-medium"}>
-                    {t.titulo}
-                  </p>
+                  <p className={t.concluida ? "line-through text-muted-foreground" : "font-medium"}>{t.titulo}</p>
                   <p className="text-xs text-muted-foreground">
                     Lead: {t.leads?.nome ?? "—"} · {respNome(t.responsavel_id)}
                   </p>
                 </div>
                 <Badge variant={atrasada ? "destructive" : "secondary"}>
-                  {t.due_at
-                    ? format(new Date(t.due_at), "dd/MM/yyyy HH:mm", { locale: ptBR })
-                    : "Sem prazo"}
+                  {t.due_at ? format(new Date(t.due_at), "dd/MM/yyyy HH:mm", { locale: ptBR }) : "Sem prazo"}
                 </Badge>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="text-destructive"
-                  onClick={() => remove.mutate(t.id)}
-                >
+                <Button size="sm" variant="ghost" className="text-destructive" onClick={() => remove.mutate(t.id)}>
                   <Trash2 className="h-4 w-4" />
                 </Button>
               </div>

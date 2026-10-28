@@ -22,9 +22,9 @@ import { Label } from "@/components/ui/label";
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
     meta: [
-      { title: "Dashboard comercial — Propulsão CRM" },
+      { title: "Dashboard comercial — Modelo CRM" },
       { name: "description", content: "Métricas de leads, conversão e canais da Rhopi Marcenaria." },
-      { property: "og:title", content: "Dashboard comercial — Propulsão CRM" },
+      { property: "og:title", content: "Dashboard comercial — Modelo CRM" },
       { property: "og:description", content: "Métricas de leads, conversão e canais." },
       { name: "robots", content: "noindex" },
     ],
@@ -33,13 +33,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 });
 
 const BRL = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
-const COLORS = [
-  "var(--chart-1)",
-  "var(--chart-2)",
-  "var(--chart-3)",
-  "var(--chart-4)",
-  "var(--chart-5)",
-];
+const COLORS = ["var(--chart-1)", "var(--chart-2)", "var(--chart-3)", "var(--chart-4)", "var(--chart-5)"];
 
 function DashboardPage() {
   const [from, setFrom] = useState("");
@@ -48,10 +42,7 @@ function DashboardPage() {
   const { data: leads = [], isLoading } = useQuery({
     queryKey: ["leads"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("leads")
-        .select("*")
-        .order("created_at", { ascending: false });
+      const { data, error } = await supabase.from("leads").select("*").order("created_at", { ascending: false });
       if (error) throw error;
       return data ?? [];
     },
@@ -98,44 +89,20 @@ function DashboardPage() {
           <Label htmlFor="d-from" className="text-xs">
             De
           </Label>
-          <Input
-            id="d-from"
-            type="date"
-            value={from}
-            onChange={(e) => setFrom(e.target.value)}
-            className="w-40"
-          />
+          <Input id="d-from" type="date" value={from} onChange={(e) => setFrom(e.target.value)} className="w-40" />
         </div>
         <div className="space-y-1">
           <Label htmlFor="d-to" className="text-xs">
             Até
           </Label>
-          <Input
-            id="d-to"
-            type="date"
-            value={to}
-            onChange={(e) => setTo(e.target.value)}
-            className="w-40"
-          />
+          <Input id="d-to" type="date" value={to} onChange={(e) => setTo(e.target.value)} className="w-40" />
         </div>
       </div>
 
       <div className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <MetricCard
-          icon={<Users className="h-4 w-4" />}
-          label="Leads no período"
-          value={String(filtered.length)}
-        />
-        <MetricCard
-          icon={<Trophy className="h-4 w-4" />}
-          label="Negócios ganhos"
-          value={String(ganhos.length)}
-        />
-        <MetricCard
-          icon={<TrendingUp className="h-4 w-4" />}
-          label="Receita ganha"
-          value={BRL.format(receita)}
-        />
+        <MetricCard icon={<Users className="h-4 w-4" />} label="Leads no período" value={String(filtered.length)} />
+        <MetricCard icon={<Trophy className="h-4 w-4" />} label="Negócios ganhos" value={String(ganhos.length)} />
+        <MetricCard icon={<TrendingUp className="h-4 w-4" />} label="Receita ganha" value={BRL.format(receita)} />
         <MetricCard
           icon={<Percent className="h-4 w-4" />}
           label="Taxa de conversão"
@@ -183,15 +150,7 @@ function DashboardPage() {
   );
 }
 
-function MetricCard({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-}) {
+function MetricCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
     <div className="surface-card p-4">
       <div className="flex items-center gap-2 text-xs text-muted-foreground">
