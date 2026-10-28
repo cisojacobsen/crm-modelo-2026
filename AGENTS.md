@@ -13,7 +13,7 @@
 
 # Contexto do Projeto
 
-Este repositório contém o "CRM Modelo Propulsão", um template base gerado via Lovable. Ele é utilizado para criar CRMs personalizados (forks) para diferentes clientes. A IA deve atuar priorizando a estabilidade do template e aplicando regras de negócio apenas no escopo do cliente atual.
+Este repositório contém o "CRM Modelo", um template base gerado via Lovable. Ele é utilizado para criar CRMs personalizados (forks) para diferentes clientes. A IA deve atuar priorizando a estabilidade do template e aplicando regras de negócio apenas no escopo do cliente atual.
 
 ## Stack Tecnológico
 
