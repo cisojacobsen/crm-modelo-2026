@@ -16,9 +16,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 export const Route = createFileRoute("/_authenticated/tarefas")({
   head: () => ({
     meta: [
-      { title: "Tarefas — Modelo CRM" },
+      { title: "Tarefas — Modelo CRM 2026" },
       { name: "description", content: "Agenda de tarefas comerciais por lead e responsável." },
-      { property: "og:title", content: "Tarefas — Modelo CRM" },
+      { property: "og:title", content: "Tarefas — Modelo CRM 2026" },
       { property: "og:description", content: "Agenda de tarefas comerciais do funil." },
       { name: "robots", content: "noindex" },
     ],

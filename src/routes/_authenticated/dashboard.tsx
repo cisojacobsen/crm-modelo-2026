@@ -22,9 +22,9 @@ import { Label } from "@/components/ui/label";
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
     meta: [
-      { title: "Dashboard comercial — Modelo CRM" },
+      { title: "Dashboard comercial — Modelo CRM 2026" },
       { name: "description", content: "Métricas de leads, conversão e canais do Modelo CRM 2026." },
-      { property: "og:title", content: "Dashboard comercial — Modelo CRM" },
+      { property: "og:title", content: "Dashboard comercial — Modelo CRM 2026" },
       { property: "og:description", content: "Métricas de leads, conversão e canais." },
       { name: "robots", content: "noindex" },
     ],

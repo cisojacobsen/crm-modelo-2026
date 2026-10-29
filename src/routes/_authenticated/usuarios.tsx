@@ -30,10 +30,10 @@ import { listUsers, createUser, setUserAdmin, setUserBlocked, deleteUser, type A
 export const Route = createFileRoute("/_authenticated/usuarios")({
   head: () => ({
     meta: [
-      { title: "Usuários · Modelo CRM" },
-      { name: "description", content: "Gerencie usuários e permissões do Modelo CRM." },
-      { property: "og:title", content: "Usuários · Modelo CRM" },
-      { property: "og:description", content: "Gerencie usuários e permissões do Modelo CRM." },
+      { title: "Usuários · Modelo CRM 2026" },
+      { name: "description", content: "Gerencie usuários e permissões do Modelo CRM 2026." },
+      { property: "og:title", content: "Usuários · Modelo CRM 2026" },
+      { property: "og:description", content: "Gerencie usuários e permissões do Modelo CRM 2026." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
