@@ -11,9 +11,9 @@ export const Route = createFileRoute("/reset-password")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Redefinir senha — Rhopi Marcenaria" },
-      { name: "description", content: "Defina uma nova senha de acesso ao CRM da Rhopi Marcenaria." },
-      { property: "og:title", content: "Redefinir senha — Rhopi Marcenaria" },
+      { title: "Redefinir senha — Modelo CRM 2026" },
+      { name: "description", content: "Defina uma nova senha de acesso ao Modelo CRM 2026." },
+      { property: "og:title", content: "Redefinir senha — Modelo CRM 2026" },
       { property: "og:description", content: "Defina uma nova senha de acesso ao CRM." },
       { name: "robots", content: "noindex" },
     ],
