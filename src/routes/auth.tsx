@@ -12,9 +12,9 @@ export const Route = createFileRoute("/auth")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Acesso ao CRM — Rhopi Marcenaria" },
-      { name: "description", content: "Área restrita da equipe comercial da Rhopi Marcenaria." },
-      { property: "og:title", content: "Acesso ao CRM — Rhopi Marcenaria" },
+      { title: "Acesso ao CRM — Modelo CRM 2026" },
+      { name: "description", content: "Área restrita da equipe comercial do Modelo CRM 2026." },
+      { property: "og:title", content: "Acesso ao CRM — Modelo CRM 2026" },
       { property: "og:description", content: "Área restrita da equipe comercial." },
       { name: "robots", content: "noindex" },
     ],

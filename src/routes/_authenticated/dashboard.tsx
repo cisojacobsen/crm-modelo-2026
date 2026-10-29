@@ -23,7 +23,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
     meta: [
       { title: "Dashboard comercial — Modelo CRM" },
-      { name: "description", content: "Métricas de leads, conversão e canais da Rhopi Marcenaria." },
+      { name: "description", content: "Métricas de leads, conversão e canais do Modelo CRM 2026." },
       { property: "og:title", content: "Dashboard comercial — Modelo CRM" },
       { property: "og:description", content: "Métricas de leads, conversão e canais." },
       { name: "robots", content: "noindex" },

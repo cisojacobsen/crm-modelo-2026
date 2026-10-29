@@ -75,7 +75,7 @@ export const Route = createFileRoute("/_authenticated/crm")({
   head: () => ({
     meta: [
       { title: "Funil de vendas — Modelo CRM" },
-      { name: "description", content: "Gestão de oportunidades e leads da Rhopi Marcenaria." },
+      { name: "description", content: "Gestão de oportunidades e leads do Modelo CRM 2026." },
       { property: "og:title", content: "Funil de vendas — Modelo CRM" },
       { property: "og:description", content: "Gestão de oportunidades e leads." },
       { name: "robots", content: "noindex" },
