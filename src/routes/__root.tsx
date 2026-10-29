@@ -70,12 +70,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Rhopi Marcenaria — CRM" },
-      {
-        name: "description",
-        content:
-          "CRM da Rhopi Marcenaria: funil de vendas, dashboard de conversão e histórico de atendimento.",
-      },
+      { title: "Modelo CRM 2026" },
+      { name: "description", content: "CRM para gestão de leads, funil de vendas e tarefas." },
+      { property: "og:title", content: "Modelo CRM 2026" },
+      { property: "og:description", content: "CRM para gestão de leads, funil de vendas e tarefas." },
+      { name: "robots", content: "noindex, nofollow" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
