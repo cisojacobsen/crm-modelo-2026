@@ -1,6 +1,7 @@
 import { createFileRoute, Outlet, redirect, Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { LayoutDashboard, KanbanSquare, LogOut, Building2, ListChecks, Users } from "lucide-react";
+import logoAsset from "@/assets/logo-evolutie-crm.webp.asset.json";
+import { LayoutDashboard, KanbanSquare, LogOut, ListChecks, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useIsAdmin } from "@/hooks/use-is-admin";
@@ -32,8 +33,7 @@ function AuthenticatedLayout() {
     <div className="flex min-h-screen bg-background">
       <aside className="sticky top-0 hidden h-screen w-60 shrink-0 flex-col bg-sidebar text-sidebar-foreground md:flex">
         <div className="flex items-center gap-2 px-5 py-6">
-          <Building2 className="h-5 w-5 text-sidebar-primary" />
-          <span className="font-display text-sm font-bold tracking-tight">Modelo CRM</span>
+          <img src={logoAsset.url} alt="Evolutie CRM" className="h-9 w-auto" />
         </div>
         <nav className="flex flex-1 flex-col gap-1 px-3">
           <SideLink to="/crm" icon={<KanbanSquare className="h-4 w-4" />} label="Funil de vendas" />
@@ -54,7 +54,7 @@ function AuthenticatedLayout() {
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex items-center justify-between gap-2 border-b border-border bg-card px-4 py-3 md:hidden">
-          <span className="font-display text-sm font-bold">Modelo CRM</span>
+          <span className="rounded-md bg-sidebar px-2 py-1"><img src={logoAsset.url} alt="Evolutie CRM" className="h-6 w-auto" /></span>
           <div className="flex gap-2">
             <Button asChild variant="ghost" size="sm">
               <Link to="/crm">Funil</Link>
