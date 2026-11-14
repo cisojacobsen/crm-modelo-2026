@@ -1,7 +1,8 @@
+import logoDarkAsset from "@/assets/logo-evolutie-crm-escuro.webp.asset.json";
 import { useState } from "react";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { Building2, ArrowLeft, Eye, EyeOff } from "lucide-react";
+import { ArrowLeft, Eye, EyeOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -72,9 +73,8 @@ function AuthPage() {
         </Link>
 
         <div className="surface-card p-7">
-          <div className="mb-6 flex items-center gap-2">
-            <Building2 className="h-5 w-5 text-accent" />
-            <span className="font-display text-base font-bold">Modelo CRM</span>
+          <div className="mb-6 flex justify-center">
+            <img src={logoDarkAsset.url} alt="Evolutie CRM" className="h-10 w-auto" />
           </div>
 
           <Tabs value={mode === "reset" ? "signin" : mode} onValueChange={(v) => setMode(v as "signin" | "signup")}>
