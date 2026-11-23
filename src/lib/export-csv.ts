@@ -14,7 +14,9 @@ const STAGE_LABELS: Record<string, string> = Object.fromEntries(
 
 /** Escapa um valor para CSV com separador ponto e vírgula. */
 function escapeCell(value: unknown): string {
-  const s = value == null ? "" : String(value);
+  let s = value == null ? "" : String(value);
+  // Neutraliza fórmulas de planilha (=, +, -, @, tab, CR) prefixando apóstrofo.
+  if (/^[=+\-@\t\r]/.test(s)) s = `'${s}`;
   if (/[";\n\r]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
   return s;
 }

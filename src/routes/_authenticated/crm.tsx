@@ -1078,7 +1078,7 @@ function LeadDetailDialog({ lead, onClose }: { lead: Lead | null; onClose: () =>
   });
 
   async function openAttachment(path: string) {
-    const { data, error } = await supabase.storage.from("lead-attachments").createSignedUrl(path, 60 * 10);
+    const { data, error } = await supabase.storage.from("lead-attachments").createSignedUrl(path, 30);
     if (error || !data) {
       toast.error("Não foi possível abrir o anexo.");
       return;
