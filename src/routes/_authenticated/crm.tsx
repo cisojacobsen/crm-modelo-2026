@@ -52,6 +52,7 @@ import {
 import { responsaveisQuery, motivosPerdaQuery, toDateInput, type Tarefa, type Responsavel } from "@/lib/crm-data";
 import { leadsToCsv, downloadCsv } from "@/lib/export-csv";
 import { cn } from "@/lib/utils";
+import { STAGE_STYLE } from "@/lib/stage-style";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -575,8 +576,10 @@ function CrmPage() {
       {leadsQuery.isLoading ? (
         <p className="text-sm text-muted-foreground">Carregando leads...</p>
       ) : (
-        <div className="flex min-h-0 flex-1 gap-4 overflow-x-auto pb-2 snap-x snap-proximity">
-          {STAGES.map((stage) => {
+        <StageBoard>
+          {STAGES.map((stage, idx) => {
+            const st = STAGE_STYLE[stage.key]!;
+            const StIcon = st.icon;
             const items = leads.filter((l) => l.stage === stage.key);
             const stageTotal = items.reduce((acc, l) => acc + (l.investimento_valor ?? 0), 0);
             return (
@@ -584,11 +587,17 @@ function CrmPage() {
                 key={stage.key}
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={(e) => onDrop(e, stage.key)}
-                className="flex h-full w-72 shrink-0 snap-start flex-col rounded-xl bg-surface p-3"
+                data-stage-col={stage.key}
+                className="relative flex h-full w-72 shrink-0 snap-start flex-col overflow-hidden rounded-xl bg-surface p-3"
               >
+                <div className={cn("absolute inset-x-0 top-0 h-1", st.bar)} />
                 <div className="sticky top-0 z-10 mb-3 rounded-lg bg-surface px-1 py-1">
                   <div className="flex items-center justify-between">
-                    <h2 className="text-sm font-semibold">{stage.label}</h2>
+                    <h2 className="flex items-center gap-1.5 text-sm font-semibold">
+                      <StIcon className={cn("h-4 w-4", st.text)} />
+                      {stage.label}
+                      <span className="text-[10px] font-normal text-muted-foreground">{idx + 1}/{STAGES.length}</span>
+                    </h2>
                     <span className="rounded-full bg-card px-2 py-0.5 text-xs text-muted-foreground">
                       {items.length}
                     </span>
@@ -644,7 +653,7 @@ function CrmPage() {
               </div>
             );
           })}
-        </div>
+        </StageBoard>
       )}
 
       <CreateLeadDialog open={createOpen} onOpenChange={setCreateOpen} />
@@ -1622,4 +1631,53 @@ function CrmMenuEvents({ onExport, onEquipe }: { onExport: () => void; onEquipe:
     };
   }, []);
   return null;
+}
+
+function StageBoard({ children }: { children: React.ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState(0);
+  function onScroll() {
+    const el = ref.current;
+    if (!el) return;
+    const cols = Array.from(el.querySelectorAll<HTMLElement>("[data-stage-col]"));
+    const left = el.getBoundingClientRect().left;
+    let best = 0;
+    let dist = Infinity;
+    cols.forEach((c, i) => {
+      const d = Math.abs(c.getBoundingClientRect().left - left);
+      if (d < dist) { dist = d; best = i; }
+    });
+    setActive(best);
+  }
+  function go(i: number) {
+    const col = ref.current?.querySelectorAll<HTMLElement>("[data-stage-col]")[i];
+    col?.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
+  }
+  return (
+    <div className="flex min-h-0 flex-1 flex-col gap-2">
+      <div className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1 lg:hidden">
+        {STAGES.map((s, i) => {
+          const st = STAGE_STYLE[s.key]!;
+          const Icon = st.icon;
+          return (
+            <button
+              key={s.key}
+              type="button"
+              onClick={() => go(i)}
+              className={cn(
+                "flex shrink-0 items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ring-1 transition-colors",
+                i === active ? st.pill : "bg-card text-muted-foreground ring-border",
+              )}
+            >
+              <Icon className="h-3.5 w-3.5" />
+              {s.label}
+            </button>
+          );
+        })}
+      </div>
+      <div ref={ref} onScroll={onScroll} className="flex min-h-0 flex-1 gap-4 overflow-x-auto pb-2 snap-x snap-proximity">
+        {children}
+      </div>
+    </div>
+  );
 }
