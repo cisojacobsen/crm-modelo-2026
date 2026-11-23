@@ -1,10 +1,11 @@
 import { createFileRoute, Outlet, redirect, Link, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import logoAsset from "@/assets/logo-evolutie-crm.webp.asset.json";
-import { LayoutDashboard, KanbanSquare, LogOut, ListChecks, Users, Menu } from "lucide-react";
+import { LayoutDashboard, KanbanSquare, LogOut, ListChecks, Users, Menu, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { useRouterState } from "@tanstack/react-router";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useIsAdmin } from "@/hooks/use-is-admin";
 
@@ -24,6 +25,12 @@ function AuthenticatedLayout() {
   const queryClient = useQueryClient();
   const { isAdmin } = useIsAdmin();
   const [menuOpen, setMenuOpen] = useState(false);
+  const onCrm = useRouterState({ select: (s) => s.location.pathname.startsWith("/crm") });
+  const fire = (name: string) => {
+    setMenuOpen(false);
+    navigate({ to: "/crm" }).then(() => setTimeout(() => window.dispatchEvent(new Event(name)), 50));
+  };
+  const subCls = "flex w-full items-center gap-2 rounded-md py-1.5 pl-9 pr-3 text-left text-sm text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground";
 
   async function handleSignOut() {
     await queryClient.cancelQueries();
@@ -40,6 +47,11 @@ function AuthenticatedLayout() {
         </div>
         <nav className="flex flex-1 flex-col gap-1 px-3">
           <SideLink to="/crm" icon={<KanbanSquare className="h-4 w-4" />} label="Funil de vendas" />
+          {onCrm && (
+            <button className={subCls + " lg:hidden"} onClick={() => fire("crm:export")}>
+              <Download className="h-3.5 w-3.5" /> Exportar CSV
+            </button>
+          )}
           <SideLink to="/tarefas" icon={<ListChecks className="h-4 w-4" />} label="Tarefas" />
           <SideLink to="/dashboard" icon={<LayoutDashboard className="h-4 w-4" />} label="Dashboard" />
           {isAdmin && <SideLink to="/usuarios" icon={<Users className="h-4 w-4" />} label="Usuários" />}
@@ -71,6 +83,12 @@ function AuthenticatedLayout() {
               </div>
               <nav className="flex flex-1 flex-col gap-1 px-3" onClick={() => setMenuOpen(false)}>
                 <SideLink to="/crm" icon={<KanbanSquare className="h-4 w-4" />} label="Funil de vendas" />
+                <button className={subCls} onClick={() => fire("crm:export")}>
+                  <Download className="h-3.5 w-3.5" /> Exportar CSV
+                </button>
+                <button className={subCls} onClick={() => fire("crm:equipe")}>
+                  <Users className="h-3.5 w-3.5" /> Responsáveis
+                </button>
                 <SideLink to="/tarefas" icon={<ListChecks className="h-4 w-4" />} label="Tarefas" />
                 <SideLink to="/dashboard" icon={<LayoutDashboard className="h-4 w-4" />} label="Dashboard" />
                 {isAdmin && <SideLink to="/usuarios" icon={<Users className="h-4 w-4" />} label="Usuários" />}

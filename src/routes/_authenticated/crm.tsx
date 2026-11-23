@@ -1,3 +1,4 @@
+import * as React from "react";
 import { Copy as CopyIcon } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
@@ -387,6 +388,7 @@ function CrmPage() {
 
   return (
     <div className="flex h-[calc(100dvh-3.5rem)] flex-col p-4 md:h-dvh md:p-6">
+      <CrmMenuEvents onExport={exportCsv} onEquipe={() => setEquipeOpen(true)} />
       <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-2xl">Funil de vendas</h1>
@@ -394,7 +396,7 @@ function CrmPage() {
             {leads.length} oportunidades · {BRL.format(total)} em pipeline
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex min-w-0 flex-wrap gap-2">
           <Button variant="outline" onClick={() => setFiltersOpen(true)}>
             <SlidersHorizontal className="mr-1 h-4 w-4" /> Filtrar
             {activeFilters.length > 0 && (
@@ -403,11 +405,11 @@ function CrmPage() {
               </Badge>
             )}
           </Button>
-          <Button variant="outline" onClick={exportCsv}>
+          <Button variant="outline" className="hidden lg:inline-flex" onClick={exportCsv}>
             <Download className="mr-1 h-4 w-4" /> Exportar CSV
           </Button>
 
-          <Button variant="outline" onClick={() => setEquipeOpen(true)}>
+          <Button variant="outline" className="hidden md:inline-flex" onClick={() => setEquipeOpen(true)}>
             <Users className="mr-1 h-4 w-4" /> Responsáveis
           </Button>
           <Button onClick={() => setCreateOpen(true)}>
@@ -1604,4 +1606,20 @@ function WhatsAppButton({ phone }: { phone: string | null | undefined }) {
       </svg>
     </a>
   );
+}
+
+function CrmMenuEvents({ onExport, onEquipe }: { onExport: () => void; onEquipe: () => void }) {
+  const ref = React.useRef({ onExport, onEquipe });
+  ref.current = { onExport, onEquipe };
+  React.useEffect(() => {
+    const e = () => ref.current.onExport();
+    const q = () => ref.current.onEquipe();
+    window.addEventListener("crm:export", e);
+    window.addEventListener("crm:equipe", q);
+    return () => {
+      window.removeEventListener("crm:export", e);
+      window.removeEventListener("crm:equipe", q);
+    };
+  }, []);
+  return null;
 }
