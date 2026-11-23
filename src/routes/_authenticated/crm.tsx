@@ -596,7 +596,9 @@ function CrmPage() {
                     <h2 className="flex items-center gap-1.5 text-sm font-semibold">
                       <StIcon className={cn("h-4 w-4", st.text)} />
                       {stage.label}
-                      <span className="text-[10px] font-normal text-muted-foreground">{idx + 1}/{STAGES.length}</span>
+                      <span className="text-[10px] font-normal text-muted-foreground">
+                        {idx + 1}/{STAGES.length}
+                      </span>
                     </h2>
                     <span className="rounded-full bg-card px-2 py-0.5 text-xs text-muted-foreground">
                       {items.length}
@@ -1645,7 +1647,10 @@ function StageBoard({ children }: { children: React.ReactNode }) {
     let dist = Infinity;
     cols.forEach((c, i) => {
       const d = Math.abs(c.getBoundingClientRect().left - left);
-      if (d < dist) { dist = d; best = i; }
+      if (d < dist) {
+        dist = d;
+        best = i;
+      }
     });
     setActive(best);
   }
@@ -1655,7 +1660,7 @@ function StageBoard({ children }: { children: React.ReactNode }) {
   }
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-2">
-      <div className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1 lg:hidden">
+      <div className="-mx-1 flex gap-1.5 overflow-x-auto px-1 py-1 lg:hidden">
         {STAGES.map((s, i) => {
           const st = STAGE_STYLE[s.key]!;
           const Icon = st.icon;
@@ -1675,7 +1680,11 @@ function StageBoard({ children }: { children: React.ReactNode }) {
           );
         })}
       </div>
-      <div ref={ref} onScroll={onScroll} className="flex min-h-0 flex-1 gap-4 overflow-x-auto pb-2 snap-x snap-proximity">
+      <div
+        ref={ref}
+        onScroll={onScroll}
+        className="flex min-h-0 flex-1 gap-4 overflow-x-auto pb-2 snap-x snap-proximity"
+      >
         {children}
       </div>
     </div>
