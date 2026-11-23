@@ -575,7 +575,7 @@ function CrmPage() {
       {leadsQuery.isLoading ? (
         <p className="text-sm text-muted-foreground">Carregando leads...</p>
       ) : (
-        <div className="flex min-h-0 flex-1 gap-4 overflow-x-auto pb-2">
+        <div className="flex min-h-0 flex-1 gap-4 overflow-x-auto pb-2 snap-x snap-proximity">
           {STAGES.map((stage) => {
             const items = leads.filter((l) => l.stage === stage.key);
             const stageTotal = items.reduce((acc, l) => acc + (l.investimento_valor ?? 0), 0);
@@ -584,7 +584,7 @@ function CrmPage() {
                 key={stage.key}
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={(e) => onDrop(e, stage.key)}
-                className="flex h-full w-72 shrink-0 flex-col rounded-xl bg-surface p-3"
+                className="flex h-full w-72 shrink-0 snap-start flex-col rounded-xl bg-surface p-3"
               >
                 <div className="sticky top-0 z-10 mb-3 rounded-lg bg-surface px-1 py-1">
                   <div className="flex items-center justify-between">
@@ -595,7 +595,7 @@ function CrmPage() {
                   </div>
                   <p className="mt-0.5 text-xs font-semibold text-muted-foreground">{BRL.format(stageTotal)}</p>
                 </div>
-                <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto overscroll-contain pr-1">
+                <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto overscroll-y-contain pr-1">
                   {items.map((lead) => (
                     <button
                       key={lead.id}
