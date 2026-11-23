@@ -7,7 +7,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const Route = createFileRoute("/auth")({
   ssr: false,
@@ -29,7 +28,7 @@ function AuthPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [mode, setMode] = useState<"signin" | "signup" | "reset">("signin");
+  const [mode, setMode] = useState<"signin" | "reset">("signin");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -40,14 +39,6 @@ function AuthPage() {
         if (error) throw error;
         toast.success("Bem-vindo de volta!");
         navigate({ to: "/crm" });
-      } else if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-          options: { emailRedirectTo: window.location.origin },
-        });
-        if (error) throw error;
-        toast.success("Conta criada! Confirme seu e-mail para acessar.");
       } else {
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
           redirectTo: `${window.location.origin}/reset-password`,
@@ -77,18 +68,7 @@ function AuthPage() {
             <img src={logoDarkAsset.url} alt="Evolutie CRM" className="h-10 w-auto" />
           </div>
 
-          <Tabs value={mode === "reset" ? "signin" : mode} onValueChange={(v) => setMode(v as "signin" | "signup")}>
-            <TabsList className="w-full">
-              <TabsTrigger value="signin" className="flex-1">
-                Entrar
-              </TabsTrigger>
-              <TabsTrigger value="signup" className="flex-1">
-                Criar conta
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent value="signin" />
-            <TabsContent value="signup" />
-          </Tabs>
+          <h1 className="text-center text-lg font-semibold">Entrar</h1>
 
           <form onSubmit={handleSubmit} className="mt-5 space-y-4">
             <div className="space-y-2">
@@ -134,9 +114,7 @@ function AuthPage() {
                 ? "Aguarde..."
                 : mode === "signin"
                   ? "Entrar"
-                  : mode === "signup"
-                    ? "Criar conta"
-                    : "Enviar link de redefinição"}
+                  : "Enviar link de redefinição"}
             </Button>
           </form>
 
