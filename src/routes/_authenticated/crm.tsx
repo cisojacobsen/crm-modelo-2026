@@ -1659,7 +1659,7 @@ function StageBoard({ children }: { children: React.ReactNode }) {
     col?.scrollIntoView({ behavior: "smooth", inline: "start", block: "nearest" });
   }
   return (
-    <div className="flex min-h-0 flex-1 flex-col gap-2">
+    <div className="flex min-h-0 flex-1 flex-col gap-4">
       <div className="-mx-1 flex gap-1.5 overflow-x-auto px-1 py-1 lg:hidden">
         {STAGES.map((s, i) => {
           const st = STAGE_STYLE[s.key]!;
