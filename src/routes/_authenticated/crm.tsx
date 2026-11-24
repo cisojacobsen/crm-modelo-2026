@@ -1145,7 +1145,6 @@ function LeadDetailDialog({ lead, onClose }: { lead: Lead | null; onClose: () =>
                     const Icon = st?.icon ?? Tag;
                     return (
                       <span className={cn("flex items-center gap-2", st?.text)}>
-                        <Icon className="h-4 w-4" />
                         <SelectValue />
                       </span>
                     );
