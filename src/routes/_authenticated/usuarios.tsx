@@ -175,7 +175,7 @@ function UsuariosAdmin() {
                       {u.auto_admin && (
                         <ShieldCheck
                           className="h-4 w-4 text-muted-foreground"
-                          aria-label="Admin automático (@propulsao.digital)"
+                          aria-label="Administrador principal"
                         />
                       )}
                     </div>
@@ -185,7 +185,7 @@ function UsuariosAdmin() {
                       <Button
                         size="sm"
                         variant="ghost"
-                        disabled={isMe || blockM.isPending}
+                        disabled={isMe || u.auto_admin || blockM.isPending}
                         onClick={() => blockM.mutate({ userId: u.id, blocked: !u.banned })}
                       >
                         <Ban className="mr-1 h-4 w-4" />
@@ -193,7 +193,7 @@ function UsuariosAdmin() {
                       </Button>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
-                          <Button size="sm" variant="ghost" disabled={isMe}>
+                          <Button size="sm" variant="ghost" disabled={isMe || u.auto_admin}>
                             <Trash2 className="h-4 w-4 text-destructive" />
                           </Button>
                         </AlertDialogTrigger>

@@ -21,8 +21,13 @@ async function admin() {
   return supabaseAdmin;
 }
 
-const isAutoAdmin = (email?: string | null) =>
-  (email ?? "").toLowerCase().endsWith("@propulsao.digital");
+const OWNER_EMAIL = "tarcisiojacobsen.dev@gmail.com";
+const isAutoAdmin = (email?: string | null) => (email ?? "").toLowerCase() === OWNER_EMAIL;
+
+async function assertNotOwner(sb: any, userId: string) {
+  const { data: u } = await sb.auth.admin.getUserById(userId);
+  if (isAutoAdmin(u.user?.email)) throw new Error("Este usuário é o administrador principal e não pode ser alterado.");
+}
 
 export const listUsers = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
@@ -61,7 +66,7 @@ export const createUser = createServerFn({ method: "POST" })
       email_confirm: true,
     });
     if (error) throw new Error(error.message);
-    if (data.isAdmin && created.user) {
+    if ((data.isAdmin || isAutoAdmin(data.email)) && created.user) {
       await sb.from("user_roles").upsert(
         { user_id: created.user.id, role: "admin" },
         { onConflict: "user_id,role" },
@@ -87,9 +92,7 @@ export const setUserAdmin = createServerFn({ method: "POST" })
         .upsert({ user_id: data.userId, role: "admin" }, { onConflict: "user_id,role" });
       if (error) throw new Error(error.message);
     } else {
-      const { data: u } = await sb.auth.admin.getUserById(data.userId);
-      if (isAutoAdmin(u.user?.email))
-        throw new Error("E-mails @propulsao.digital são sempre administradores.");
+      await assertNotOwner(sb, data.userId);
       const { error } = await sb
         .from("user_roles")
         .delete()
@@ -110,6 +113,7 @@ export const setUserBlocked = createServerFn({ method: "POST" })
     await assertAdmin(context.supabase, context.userId);
     if (data.userId === context.userId) throw new Error("Você não pode bloquear a si mesmo.");
     const sb = await admin();
+    await assertNotOwner(sb, data.userId);
     const { error } = await sb.auth.admin.updateUserById(data.userId, {
       ban_duration: data.blocked ? "876000h" : "none",
     });
@@ -124,6 +128,7 @@ export const deleteUser = createServerFn({ method: "POST" })
     await assertAdmin(context.supabase, context.userId);
     if (data.userId === context.userId) throw new Error("Você não pode excluir a si mesmo.");
     const sb = await admin();
+    await assertNotOwner(sb, data.userId);
     const { error } = await sb.auth.admin.deleteUser(data.userId);
     if (error) throw new Error(error.message);
     return { ok: true };
