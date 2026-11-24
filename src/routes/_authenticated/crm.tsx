@@ -1090,6 +1090,18 @@ function LeadDetailDialog({ lead, onClose }: { lead: Lead | null; onClose: () =>
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const setStage = useMutation({
+    mutationFn: async (stage: Stage) => {
+      const { error } = await supabase.from("leads").update({ stage }).eq("id", lead!.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["leads"] });
+      toast.success("Etapa atualizada.");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   async function openAttachment(path: string) {
     const { data, error } = await supabase.storage.from("lead-attachments").createSignedUrl(path, 30);
     if (error || !data) {
@@ -1115,6 +1127,49 @@ function LeadDetailDialog({ lead, onClose }: { lead: Lead | null; onClose: () =>
                 {resolveChannel(lead)}
               </DialogDescription>
             </DialogHeader>
+
+            <div className="flex flex-wrap items-center gap-3 rounded-lg border border-border bg-surface p-3">
+              <Label htmlFor="lead-stage" className="shrink-0 text-xs font-medium text-muted-foreground">
+                Etapa do funil
+              </Label>
+              <Select
+                value={lead.stage}
+                onValueChange={(v) => {
+                  if (v !== lead.stage) setStage.mutate(v as Stage);
+                }}
+                disabled={setStage.isPending}
+              >
+                <SelectTrigger id="lead-stage" className="w-auto min-w-52 gap-2">
+                  {(() => {
+                    const st = STAGE_STYLE[lead.stage];
+                    const Icon = st?.icon ?? Tag;
+                    return (
+                      <span className={cn("flex items-center gap-2", st?.text)}>
+                        <Icon className="h-4 w-4" />
+                        <SelectValue />
+                      </span>
+                    );
+                  })()}
+                </SelectTrigger>
+                <SelectContent>
+                  {STAGES.map((s) => {
+                    const st = STAGE_STYLE[s.key];
+                    const Icon = st?.icon ?? Tag;
+                    return (
+                      <SelectItem key={s.key} value={s.key}>
+                        <span className="flex items-center gap-2">
+                          <Icon className={cn("h-4 w-4", st?.text)} />
+                          {s.label}
+                        </span>
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+              <span className="ml-auto text-xs text-muted-foreground">
+                {STAGES.findIndex((s) => s.key === lead.stage) + 1}/{STAGES.length}
+              </span>
+            </div>
 
             <div className="grid gap-4 lg:grid-cols-2">
               <div className="min-w-0 space-y-3">
