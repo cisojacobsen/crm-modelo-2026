@@ -86,9 +86,11 @@ function AuthenticatedLayout() {
                 <button className={subCls} onClick={() => fire("crm:export")}>
                   <Download className="h-3.5 w-3.5" /> Exportar CSV
                 </button>
-                <button className={subCls} onClick={() => fire("crm:equipe")}>
-                  <Users className="h-3.5 w-3.5" /> Responsáveis
-                </button>
+                {isAdmin && (
+                  <button className={subCls} onClick={() => fire("crm:equipe")}>
+                    <Users className="h-3.5 w-3.5" /> Responsáveis
+                  </button>
+                )}
                 <SideLink to="/tarefas" icon={<ListChecks className="h-4 w-4" />} label="Tarefas" />
                 <SideLink to="/dashboard" icon={<LayoutDashboard className="h-4 w-4" />} label="Dashboard" />
                 {isAdmin && <SideLink to="/usuarios" icon={<Users className="h-4 w-4" />} label="Usuários" />}

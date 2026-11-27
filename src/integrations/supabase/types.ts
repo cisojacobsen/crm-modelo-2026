@@ -282,6 +282,7 @@ export type Database = {
           id: string
           nome: string
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           ativo?: boolean
@@ -290,6 +291,7 @@ export type Database = {
           id?: string
           nome: string
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           ativo?: boolean
@@ -298,6 +300,7 @@ export type Database = {
           id?: string
           nome?: string
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -327,6 +330,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      current_responsavel_ids: { Args: never; Returns: string[] }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

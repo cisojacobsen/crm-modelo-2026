@@ -67,7 +67,7 @@ function UsuariosAdmin() {
   const setBlocked = useServerFn(setUserBlocked);
   const remove = useServerFn(deleteUser);
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({ email: "", password: "", isAdmin: false });
+  const [form, setForm] = useState({ nome: "", email: "", password: "", isAdmin: false });
   const [show, setShow] = useState(false);
 
   const me = useQuery({
@@ -82,8 +82,9 @@ function UsuariosAdmin() {
     mutationFn: () => create({ data: form }),
     onSuccess: () => {
       toast.success("Usuário criado.");
+      qc.invalidateQueries({ queryKey: ["responsaveis"] });
       setOpen(false);
-      setForm({ email: "", password: "", isAdmin: false });
+      setForm({ nome: "", email: "", password: "", isAdmin: false });
       refresh();
     },
     onError,
@@ -225,6 +226,14 @@ function UsuariosAdmin() {
             <DialogTitle>Novo usuário</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
+            <div className="space-y-1">
+              <Label>Nome do responsável</Label>
+              <Input
+                placeholder="Ex: Camila Silva"
+                value={form.nome}
+                onChange={(e) => setForm({ ...form, nome: e.target.value })}
+              />
+            </div>
             <div className="space-y-1">
               <Label>E-mail</Label>
               <Input

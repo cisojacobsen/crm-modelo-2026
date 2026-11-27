@@ -39,6 +39,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useIsAdmin } from "@/hooks/use-is-admin";
+import { useServerFn } from "@tanstack/react-start";
+import { createUser } from "@/lib/users.functions";
 import {
   STAGES,
   STATUS_LABELS,
@@ -132,6 +134,7 @@ function CrmPage() {
   const [selected, setSelected] = useState<Lead | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
   const [equipeOpen, setEquipeOpen] = useState(false);
+  const { isAdmin: isAdminUser } = useIsAdmin();
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
   const [exportFrom, setExportFrom] = useState<Date | undefined>(undefined);
@@ -389,7 +392,7 @@ function CrmPage() {
 
   return (
     <div className="flex h-[calc(100dvh-3.5rem)] flex-col p-4 md:h-dvh md:p-6">
-      <CrmMenuEvents onExport={exportCsv} onEquipe={() => setEquipeOpen(true)} />
+      <CrmMenuEvents onExport={exportCsv} onEquipe={() => isAdminUser && setEquipeOpen(true)} />
       <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-2xl">Funil de vendas</h1>
@@ -410,9 +413,11 @@ function CrmPage() {
             <Download className="mr-1 h-4 w-4" /> Exportar CSV
           </Button>
 
-          <Button variant="outline" className="hidden md:inline-flex" onClick={() => setEquipeOpen(true)}>
-            <Users className="mr-1 h-4 w-4" /> Responsáveis
-          </Button>
+          {isAdminUser && (
+            <Button variant="outline" className="hidden md:inline-flex" onClick={() => setEquipeOpen(true)}>
+              <Users className="mr-1 h-4 w-4" /> Responsáveis
+            </Button>
+          )}
           <Button onClick={() => setCreateOpen(true)}>
             <Plus className="mr-1 h-4 w-4" /> Nova oportunidade
           </Button>
@@ -698,21 +703,23 @@ function CrmPage() {
 function ResponsaveisDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
   const queryClient = useQueryClient();
   const responsaveis = useQuery(responsaveisQuery);
+  const createUserFn = useServerFn(createUser);
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
+  const [senha, setSenha] = useState("");
+  const [perfil, setPerfil] = useState<"vendedor" | "admin">("vendedor");
 
   const create = useMutation({
-    mutationFn: async () => {
-      const { error } = await supabase
-        .from("responsaveis")
-        .insert({ nome: nome.trim().slice(0, 120), email: email.trim() || null });
-      if (error) throw error;
-    },
+    mutationFn: () =>
+      createUserFn({ data: { nome: nome.trim(), email: email.trim(), password: senha, isAdmin: perfil === "admin" } }),
     onSuccess: () => {
       setNome("");
       setEmail("");
-      toast.success("Responsável cadastrado.");
+      setSenha("");
+      setPerfil("vendedor");
+      toast.success("Responsável criado com acesso ao CRM.");
       queryClient.invalidateQueries({ queryKey: ["responsaveis"] });
+      queryClient.invalidateQueries({ queryKey: ["app-users"] });
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -737,22 +744,35 @@ function ResponsaveisDialog({ open, onOpenChange }: { open: boolean; onOpenChang
           <DialogTitle>Responsáveis</DialogTitle>
           <DialogDescription>Vendedores que podem ser atribuídos aos leads.</DialogDescription>
         </DialogHeader>
-        <div className="flex flex-wrap items-end gap-2">
-          <div className="min-w-40 flex-1 space-y-1">
-            <Label className="text-xs">Nome</Label>
-            <Input value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Vendedor" />
+        <div className="grid gap-2 sm:grid-cols-2">
+          <div className="space-y-1">
+            <Label className="text-xs">Nome do responsável</Label>
+            <Input value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Ex: Camila Silva" />
           </div>
-          <div className="min-w-40 flex-1 space-y-1">
-            <Label className="text-xs">E-mail (opcional)</Label>
-            <Input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="vendedor@empresa.com"
-            />
+          <div className="space-y-1">
+            <Label className="text-xs">E-mail de acesso</Label>
+            <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="vendedor@empresa.com" />
           </div>
-          <Button disabled={!nome.trim() || create.isPending} onClick={() => create.mutate()}>
-            Adicionar
+          <div className="space-y-1">
+            <Label className="text-xs">Senha inicial</Label>
+            <Input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} placeholder="Mínimo 8 caracteres" />
+          </div>
+          <div className="space-y-1">
+            <Label className="text-xs">Perfil</Label>
+            <Select value={perfil} onValueChange={(v) => setPerfil(v as "vendedor" | "admin")}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="vendedor">Vendedor / Responsável</SelectItem>
+                <SelectItem value="admin">Administrador</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <Button
+            className="sm:col-span-2"
+            disabled={!nome.trim() || !email.trim() || senha.length < 8 || create.isPending}
+            onClick={() => create.mutate()}
+          >
+            {create.isPending ? "Criando..." : "Criar responsável com acesso"}
           </Button>
         </div>
         <div className="space-y-2">

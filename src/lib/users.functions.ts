@@ -51,11 +51,12 @@ export const listUsers = createServerFn({ method: "GET" })
 
 export const createUser = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { email: string; password: string; isAdmin: boolean }) => {
+  .inputValidator((d: { email: string; password: string; isAdmin: boolean; nome?: string }) => {
+    const nome = String(d.nome ?? "").trim().slice(0, 120);
     const email = String(d.email ?? "").trim().toLowerCase();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error("E-mail inválido.");
     if (String(d.password ?? "").length < 8) throw new Error("Senha precisa de 8+ caracteres.");
-    return { email, password: String(d.password), isAdmin: !!d.isAdmin };
+    return { email, password: String(d.password), isAdmin: !!d.isAdmin, nome };
   })
   .handler(async ({ data, context }) => {
     await assertAdmin(context.supabase, context.userId);
@@ -71,6 +72,17 @@ export const createUser = createServerFn({ method: "POST" })
         { user_id: created.user.id, role: "admin" },
         { onConflict: "user_id,role" },
       );
+    }
+    if (created.user) {
+      const { error: rErr } = await sb.from("responsaveis").insert({
+        nome: data.nome || (data.email.split("@")[0] ?? data.email),
+        email: data.email,
+        user_id: created.user.id,
+      });
+      if (rErr) {
+        await sb.auth.admin.deleteUser(created.user.id);
+        throw new Error("Não foi possível criar o responsável: " + rErr.message);
+      }
     }
     return { ok: true };
   });

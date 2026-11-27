@@ -40,3 +40,6 @@ Quando iniciar a customização para um novo cliente, a IA deve focar nos seguin
 2. Substituir o `public/favicon.ico`, logomarca do cliente e atualizar títulos/metadados no arquivo de indexação.
 3. Ajustar as variáveis de cor primária e tipografia em `src/styles.css` para bater com o branding do cliente.
 4. Expandir campos customizados de Leads de forma incremental no Drizzle sem quebrar as views padrões existentes.
+
+- Access model: admins see everything; sellers see only leads/tasks whose responsavel_id maps to a responsaveis row with their user_id (via `current_responsavel_ids()` in RLS). Why: per-seller isolation enforced in the database.
+- Creating a seller always goes through `createUser` (users.functions.ts), which creates the login and the linked responsaveis row together. Why: no responsável without an account.
