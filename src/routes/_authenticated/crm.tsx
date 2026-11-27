@@ -751,16 +751,28 @@ function ResponsaveisDialog({ open, onOpenChange }: { open: boolean; onOpenChang
           </div>
           <div className="space-y-1">
             <Label className="text-xs">E-mail de acesso</Label>
-            <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="vendedor@empresa.com" />
+            <Input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="vendedor@empresa.com"
+            />
           </div>
           <div className="space-y-1">
             <Label className="text-xs">Senha inicial</Label>
-            <Input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} placeholder="Mínimo 8 caracteres" />
+            <Input
+              type="password"
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
+              placeholder="Mínimo 8 caracteres"
+            />
           </div>
           <div className="space-y-1">
             <Label className="text-xs">Perfil</Label>
             <Select value={perfil} onValueChange={(v) => setPerfil(v as "vendedor" | "admin")}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="vendedor">Vendedor / Responsável</SelectItem>
                 <SelectItem value="admin">Administrador</SelectItem>
@@ -1220,10 +1232,7 @@ function LeadDetailDialog({ lead, onClose }: { lead: Lead | null; onClose: () =>
                     const next = v === "sem" ? null : v;
                     if (next !== lead.responsavel_id) setResponsavel.mutate(next);
                   }}
-                  disabled={
-                    setResponsavel.isPending ||
-                    (!isAdmin && !(meuResp && lead.responsavel_id === meuResp.id))
-                  }
+                  disabled={setResponsavel.isPending || (!isAdmin && !(meuResp && lead.responsavel_id === meuResp.id))}
                 >
                   <SelectTrigger id="lead-resp" className="w-auto min-w-44 gap-2">
                     <UserRound className="h-4 w-4 text-muted-foreground" />
@@ -1673,7 +1682,7 @@ function LeadTarefas({ leadId }: { leadId: string }) {
           <Input type="datetime-local" value={dueAt} onChange={(e) => setDueAt(e.target.value)} className="w-52" />
         </div>
         <div className="space-y-1">
-          <Label className="text-xs">Responsável</Label>
+          <Label className="text-xs">Responsável pela Tarefa</Label>
           <Select value={respId} onValueChange={setRespId}>
             <SelectTrigger className="w-44">
               <SelectValue />
