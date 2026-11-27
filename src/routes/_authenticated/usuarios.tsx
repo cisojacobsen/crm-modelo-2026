@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   AlertDialog,
@@ -262,9 +263,18 @@ function UsuariosAdmin() {
                 </button>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Switch checked={form.isAdmin} onCheckedChange={(v) => setForm({ ...form, isAdmin: v })} />
-              <Label>Administrador</Label>
+            <div className="space-y-1">
+              <Label>Perfil</Label>
+              <Select
+                value={form.isAdmin ? "admin" : "vendedor"}
+                onValueChange={(v) => setForm({ ...form, isAdmin: v === "admin" })}
+              >
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="vendedor">Vendedor / Responsável</SelectItem>
+                  <SelectItem value="admin">Administrador</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <DialogFooter>
