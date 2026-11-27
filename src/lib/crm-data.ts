@@ -5,6 +5,7 @@ export type Responsavel = {
   nome: string;
   email: string | null;
   ativo: boolean;
+  user_id: string | null;
 };
 
 export type MotivoPerda = {
@@ -29,7 +30,7 @@ export const responsaveisQuery = {
   queryFn: async (): Promise<Responsavel[]> => {
     const { data, error } = await supabase
       .from("responsaveis")
-      .select("id, nome, email, ativo")
+      .select("id, nome, email, ativo, user_id")
       .order("nome");
     if (error) throw error;
     return data ?? [];

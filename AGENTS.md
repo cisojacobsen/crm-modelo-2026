@@ -43,3 +43,4 @@ Quando iniciar a customização para um novo cliente, a IA deve focar nos seguin
 
 - Access model: admins see everything; sellers see only leads/tasks whose responsavel_id maps to a responsaveis row with their user_id (via `current_responsavel_ids()` in RLS). Why: per-seller isolation enforced in the database.
 - Creating a seller always goes through `createUser` (users.functions.ts), which creates the login and the linked responsaveis row together. Why: no responsável without an account.
+- Open queue: sellers see/claim unassigned leads in stage "novos"; a seller may only set responsavel_id to self or NULL (RLS WITH CHECK). Why: first-come lead pickup without seller-to-seller transfers.

@@ -22,6 +22,13 @@
       "when": 1795786672704,
       "tag": "0002_auto_assign_seller_on_lead_insert",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1795786984148,
+      "tag": "0003_fila_aberta_novos_leads",
+      "breakpoints": true
     }
   ]
 }

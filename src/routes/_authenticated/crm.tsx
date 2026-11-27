@@ -945,6 +945,12 @@ function LeadDetailDialog({ lead, onClose }: { lead: Lead | null; onClose: () =>
 
   const responsaveis = useQuery(responsaveisQuery);
   const motivos = useQuery(motivosPerdaQuery);
+  const currentUser = useQuery({
+    queryKey: ["current-user-id"],
+    queryFn: async () => (await supabase.auth.getUser()).data.user?.id ?? null,
+    staleTime: Infinity,
+  });
+  const meuResp = (responsaveis.data ?? []).find((r) => r.user_id && r.user_id === currentUser.data) ?? null;
 
   useEffect(() => {
     if (!lead) return;
@@ -1129,8 +1135,11 @@ function LeadDetailDialog({ lead, onClose }: { lead: Lead | null; onClose: () =>
     },
     onSuccess: (_d, respId) => {
       setContato((c) => ({ ...c, responsavel_id: respId ?? "sem" }));
+      if (lead) lead.responsavel_id = respId;
       queryClient.invalidateQueries({ queryKey: ["leads"] });
-      toast.success("Responsável atualizado.");
+      if (respId === null) toast.success("Lead devolvido para a fila aberta.");
+      else if (!isAdmin) toast.success("Lead assumido. Agora ele é seu.");
+      else toast.success("Responsável atualizado.");
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -1211,7 +1220,10 @@ function LeadDetailDialog({ lead, onClose }: { lead: Lead | null; onClose: () =>
                     const next = v === "sem" ? null : v;
                     if (next !== lead.responsavel_id) setResponsavel.mutate(next);
                   }}
-                  disabled={setResponsavel.isPending}
+                  disabled={
+                    setResponsavel.isPending ||
+                    (!isAdmin && !(meuResp && lead.responsavel_id === meuResp.id))
+                  }
                 >
                   <SelectTrigger id="lead-resp" className="w-auto min-w-44 gap-2">
                     <UserRound className="h-4 w-4 text-muted-foreground" />
@@ -1219,13 +1231,34 @@ function LeadDetailDialog({ lead, onClose }: { lead: Lead | null; onClose: () =>
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="sem">Sem responsável</SelectItem>
-                    {(responsaveis.data ?? []).map((r) => (
-                      <SelectItem key={r.id} value={r.id}>
-                        {r.nome}
-                      </SelectItem>
-                    ))}
+                    {(responsaveis.data ?? [])
+                      .filter((r) => isAdmin || r.id === meuResp?.id || r.id === lead.responsavel_id)
+                      .map((r) => (
+                        <SelectItem key={r.id} value={r.id}>
+                          {r.nome}
+                        </SelectItem>
+                      ))}
                   </SelectContent>
                 </Select>
+                {meuResp && !lead.responsavel_id && (
+                  <Button
+                    size="sm"
+                    onClick={() => setResponsavel.mutate(meuResp.id)}
+                    disabled={setResponsavel.isPending}
+                  >
+                    Assumir lead
+                  </Button>
+                )}
+                {meuResp && lead.responsavel_id === meuResp.id && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setResponsavel.mutate(null)}
+                    disabled={setResponsavel.isPending}
+                  >
+                    Devolver à fila
+                  </Button>
+                )}
               </div>
             </div>
 
