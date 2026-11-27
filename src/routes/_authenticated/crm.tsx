@@ -1102,6 +1102,19 @@ function LeadDetailDialog({ lead, onClose }: { lead: Lead | null; onClose: () =>
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const setResponsavel = useMutation({
+    mutationFn: async (respId: string | null) => {
+      const { error } = await supabase.from("leads").update({ responsavel_id: respId }).eq("id", lead!.id);
+      if (error) throw error;
+    },
+    onSuccess: (_d, respId) => {
+      setContato((c) => ({ ...c, responsavel_id: respId ?? "sem" }));
+      queryClient.invalidateQueries({ queryKey: ["leads"] });
+      toast.success("Responsável atualizado.");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   async function openAttachment(path: string) {
     const { data, error } = await supabase.storage.from("lead-attachments").createSignedUrl(path, 30);
     if (error || !data) {
@@ -1165,9 +1178,35 @@ function LeadDetailDialog({ lead, onClose }: { lead: Lead | null; onClose: () =>
                   })}
                 </SelectContent>
               </Select>
-              <span className="ml-auto text-xs text-muted-foreground">
+              <span className="text-xs text-muted-foreground">
                 {STAGES.findIndex((s) => s.key === lead.stage) + 1}/{STAGES.length}
               </span>
+              <div className="flex items-center gap-2 sm:ml-auto">
+                <Label htmlFor="lead-resp" className="shrink-0 text-xs font-medium text-muted-foreground">
+                  Responsável
+                </Label>
+                <Select
+                  value={lead.responsavel_id ?? "sem"}
+                  onValueChange={(v) => {
+                    const next = v === "sem" ? null : v;
+                    if (next !== lead.responsavel_id) setResponsavel.mutate(next);
+                  }}
+                  disabled={setResponsavel.isPending}
+                >
+                  <SelectTrigger id="lead-resp" className="w-auto min-w-44 gap-2">
+                    <UserRound className="h-4 w-4 text-muted-foreground" />
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="sem">Sem responsável</SelectItem>
+                    {(responsaveis.data ?? []).map((r) => (
+                      <SelectItem key={r.id} value={r.id}>
+                        {r.nome}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
             <div className="grid gap-4 lg:grid-cols-2">
@@ -1597,7 +1636,7 @@ function LeadTarefas({ leadId }: { leadId: string }) {
           </Select>
         </div>
         <Button size="sm" disabled={!titulo.trim() || create.isPending} onClick={() => create.mutate()}>
-          Adicionar
+          Adicionar tarefa
         </Button>
       </div>
 
