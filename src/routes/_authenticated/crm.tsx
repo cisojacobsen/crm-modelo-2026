@@ -316,7 +316,7 @@ function CrmPage() {
       if (error) throw error;
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["leads"] }),
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(friendlyError(e)),
   });
 
   function onDrop(e: React.DragEvent, stage: Stage) {
@@ -721,7 +721,7 @@ function ResponsaveisDialog({ open, onOpenChange }: { open: boolean; onOpenChang
       queryClient.invalidateQueries({ queryKey: ["responsaveis"] });
       queryClient.invalidateQueries({ queryKey: ["app-users"] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(friendlyError(e)),
   });
 
   const remove = useMutation({
@@ -734,7 +734,7 @@ function ResponsaveisDialog({ open, onOpenChange }: { open: boolean; onOpenChang
       queryClient.invalidateQueries({ queryKey: ["responsaveis"] });
       queryClient.invalidateQueries({ queryKey: ["leads"] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(friendlyError(e)),
   });
 
   return (
@@ -833,7 +833,7 @@ function CreateLeadDialog({ open, onOpenChange }: { open: boolean; onOpenChange:
       onOpenChange(false);
       setForm(emptyForm);
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(friendlyError(e)),
   });
 
   return (
@@ -994,7 +994,7 @@ function LeadDetailDialog({ lead, onClose }: { lead: Lead | null; onClose: () =>
       toast.success("Dados do lead atualizados.");
       queryClient.invalidateQueries({ queryKey: ["leads"] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(friendlyError(e)),
   });
 
   const deleteLead = useMutation({
@@ -1026,7 +1026,7 @@ function LeadDetailDialog({ lead, onClose }: { lead: Lead | null; onClose: () =>
       queryClient.invalidateQueries({ queryKey: ["leads"] });
       onClose();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(friendlyError(e)),
   });
 
   const timeline = useQuery({
@@ -1085,7 +1085,7 @@ function LeadDetailDialog({ lead, onClose }: { lead: Lead | null; onClose: () =>
       toast.success("Registro adicionado à timeline.");
       queryClient.invalidateQueries({ queryKey: ["lead-timeline", lead?.id] });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(friendlyError(e)),
   });
 
   const setStatus = useMutation({
@@ -1113,7 +1113,7 @@ function LeadDetailDialog({ lead, onClose }: { lead: Lead | null; onClose: () =>
       toast.success("Status atualizado.");
       onClose();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(friendlyError(e)),
   });
 
   const setStage = useMutation({
@@ -1125,7 +1125,7 @@ function LeadDetailDialog({ lead, onClose }: { lead: Lead | null; onClose: () =>
       queryClient.invalidateQueries({ queryKey: ["leads"] });
       toast.success("Etapa atualizada.");
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(friendlyError(e)),
   });
 
   const setResponsavel = useMutation({
@@ -1141,7 +1141,7 @@ function LeadDetailDialog({ lead, onClose }: { lead: Lead | null; onClose: () =>
       else if (!isAdmin) toast.success("Lead assumido. Agora ele é seu.");
       else toast.success("Responsável atualizado.");
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(friendlyError(e)),
   });
 
   async function openAttachment(path: string) {
@@ -1633,7 +1633,7 @@ function LeadTarefas({ leadId }: { leadId: string }) {
       toast.success("Tarefa criada.");
       invalidate();
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(friendlyError(e)),
   });
 
   const toggle = useMutation({
@@ -1648,7 +1648,7 @@ function LeadTarefas({ leadId }: { leadId: string }) {
       if (error) throw error;
     },
     onSuccess: invalidate,
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(friendlyError(e)),
   });
 
   const remove = useMutation({
@@ -1657,7 +1657,7 @@ function LeadTarefas({ leadId }: { leadId: string }) {
       if (error) throw error;
     },
     onSuccess: invalidate,
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toast.error(friendlyError(e)),
   });
 
   return (
@@ -1835,4 +1835,12 @@ function StageBoard({ children }: { children: React.ReactNode }) {
       </div>
     </div>
   );
+}
+
+function friendlyError(e: Error): string {
+  const m = (e?.message ?? "").toLowerCase();
+  if (m.includes("row-level security") || m.includes("permission denied") || m.includes("violates")) {
+    return "Você não tem permissão para esta ação. Se o lead estiver na fila, assuma-o antes de alterá-lo.";
+  }
+  return e?.message || "Não foi possível concluir a ação. Tente novamente.";
 }
